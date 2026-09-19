@@ -62,7 +62,7 @@ def cartesian_point_to_pixel(cart: np.ndarray) -> np.ndarray:
         z_pixel = z * metric[2]
         return np.array([x_pixel, y_pixel, z_pixel])
 
-
+"""
 source_1_p = cartesian_point_to_pixel(source_1)
 plt.plot(source_1_p[0], source_1_p[1], 'o')
 source_2_p = cartesian_point_to_pixel(source_2)
@@ -72,12 +72,36 @@ pixel_range_x = cartesian_point_to_pixel([cartesian_min_x, cartesian_max_x])
 pixel_range_y = cartesian_point_to_pixel([cartesian_min_y, cartesian_max_y])
 plt.xlim(pixel_range_x[0], pixel_range_x[1])
 plt.ylim(pixel_range_y[0], pixel_range_y[1])
+"""
 
-
-
-t = np.linspace(0, 3, 10)
+"""t = np.linspace(0, 3, 10)
 f = lambda t: np.array([t, t**2])
 curve = np.array([cartesian_point_to_pixel(f(x)) for x in t])
 plt.plot(curve[:, 0], curve[:, 1])
-print(curve)
+print(curve)"""
+
+
+def fresnel_radius(d1, d2, wavelength, n = 1):
+    D = d1 + d2
+    return np.sqrt(n * wavelength * d1 * d2 / D)
+
+optical_length = 5e-7 # 500 nm
+print(fresnel_radius(d1 = 30, d2 = 3, wavelength = optical_length))
+print(fresnel_radius(d1 = 1, d2 = 1, wavelength = 0.02, n = 1))
+
+#subroutine for plotting the center of a fresnel zone (where approximate formula holds)
+source = np.array([1, 1]) #units is meters
+sink = np.array([3, 1])
+center = np.array([2, 1])
+plt.plot(source[0], source[1], 'o')
+plt.plot(sink[0], sink[1], 'o')
+plt.plot(center[0], center[1], 'o', markersize = 5, color = 'k')
+x_range = np.linspace(1.1, 2.9, 100)
+d1 = x_range - np.ones_like(x_range) * source[0]
+d2 = np.ones_like(x_range) * sink[0] - x_range
+radii = fresnel_radius(d1, d2, wavelength = 0.02, n = 1)
+plt.plot(x_range, np.ones_like(x_range) + radii, color = 'k')
+plt.plot(x_range, np.ones_like(x_range) - radii, color = 'k')
+plt.xlim(0, 4)
+plt.ylim(0, 2)
 plt.show()
