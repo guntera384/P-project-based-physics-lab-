@@ -82,26 +82,27 @@ print(curve)"""
 
 
 def fresnel_radius(d1, d2, wavelength, n = 1):
+    #approximation formulat for d1/d2 close to center
     D = d1 + d2
     return np.sqrt(n * wavelength * d1 * d2 / D)
 
 optical_length = 5e-7 # 500 nm
-print(fresnel_radius(d1 = 30, d2 = 3, wavelength = optical_length))
-print(fresnel_radius(d1 = 1, d2 = 1, wavelength = 0.02, n = 1))
+#print(fresnel_radius(d1 = 30, d2 = 3, wavelength = optical_length))
+#print(fresnel_radius(d1 = 1, d2 = 1, wavelength = 0.02, n = 1))
 
-#subroutine for plotting the center of a fresnel zone (where approximate formula holds)
-source = np.array([1, 1]) #units is meters
-sink = np.array([3, 1])
-center = np.array([2, 1])
-plt.plot(source[0], source[1], 'o')
-plt.plot(sink[0], sink[1], 'o')
-plt.plot(center[0], center[1], 'o', markersize = 5, color = 'k')
-x_range = np.linspace(1.1, 2.9, 100)
-d1 = x_range - np.ones_like(x_range) * source[0]
-d2 = np.ones_like(x_range) * sink[0] - x_range
-radii = fresnel_radius(d1, d2, wavelength = 0.02, n = 1)
-plt.plot(x_range, np.ones_like(x_range) + radii, color = 'k')
-plt.plot(x_range, np.ones_like(x_range) - radii, color = 'k')
-plt.xlim(0, 4)
-plt.ylim(0, 2)
+def plot_fresnel_zone(A, B, wavelength, n = 3):
+    Ax = A[0]; Ay = A[1]
+    Bx = B[0]; By = B[1]
+    L = np.sqrt((Bx-Ax)**2 + (By - Ay)**2)
+    x = np.linspace(Ax - 50 * wavelength, Bx + 50 * wavelength, 500)
+    y = np.linspace(Ay - 50 * wavelength, By + 50 * wavelength, 500)
+    X, Y = np.meshgrid(x, y)
+    path_difference = np.sqrt((Ax - X)**2 + (Ay - Y)**2) + np.sqrt((Bx - X)**2 + (By - Y)**2) - L
+    levels = np.arange(1, n+1) * (wavelength / 2)
+    plt.contour(x, y, path_difference, levels = levels)
+    plt.plot(Ax, Ay, 'o', color = 'k')
+    plt.plot(Bx, By, 'o', color = 'k')
+    #plt.axis("equal")
+
+plot_fresnel_zone(A = [0, 1], B = [5, 1], wavelength = 0.02)
 plt.show()
