@@ -72,8 +72,12 @@ pixel_range_x = cartesian_point_to_pixel([cartesian_min_x, cartesian_max_x])
 pixel_range_y = cartesian_point_to_pixel([cartesian_min_y, cartesian_max_y])
 plt.xlim(pixel_range_x[0], pixel_range_x[1])
 plt.ylim(pixel_range_y[0], pixel_range_y[1])
-plt.show()
 
-test = np.array([1, 1, 1])
-out = cartesian_point_to_pixel(test)
-print(out)
+
+
+t = np.linspace(0, 3, 10)
+f = lambda t: np.array([t, t**2])
+curve = np.array([cartesian_point_to_pixel(f(x)) for x in t])
+plt.plot(curve[:, 0], curve[:, 1])
+print(curve)
+plt.show()
