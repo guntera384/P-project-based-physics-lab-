@@ -74,6 +74,6 @@ plt.xlim(pixel_range_x[0], pixel_range_x[1])
 plt.ylim(pixel_range_y[0], pixel_range_y[1])
 plt.show()
 
-test = np.array([1, 1, 11])
+test = np.array([1, 1, 1])
 out = cartesian_point_to_pixel(test)
 print(out)
