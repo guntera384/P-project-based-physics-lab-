@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from geometry import *
+from physics_tools.geometry import *
 #import coordinates
 
 

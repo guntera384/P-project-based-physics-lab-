@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from coordinates import *
+from physics_tools.coordinates import *
 
 
 def build_lattice(a, b, c = [None], n_cells = None):
