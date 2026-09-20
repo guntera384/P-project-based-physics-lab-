@@ -1,4 +1,5 @@
 import numpy as np
+from numpy import sin, cos, pi, e, exp
 import matplotlib.pyplot as plt
 
 
@@ -62,23 +63,22 @@ def cartesian_point_to_pixel(cart: np.ndarray) -> np.ndarray:
         z_pixel = z * metric[2]
         return np.array([x_pixel, y_pixel, z_pixel])
 
+def deg_to_rad(deg):
+    return deg / 360 * 2 * pi
+
+def rad_to_deg(rad):
+    return rad / (2 * pi) * 360
+
+def polar_to_cartesian(polar, angle = "rad"):
+    r = polar[0]
+    theta = polar[1]
+    if angle == "deg":
+        theta = deg_to_rad(theta)
+    return np.array([r* cos(theta), r * sin(theta)])
+
 
 if __name__ == "__main__":
-    source_1_p = cartesian_point_to_pixel(source_1)
-    plt.plot(source_1_p[0], source_1_p[1], 'o')
-    source_2_p = cartesian_point_to_pixel(source_2)
-    plt.plot(source_2_p[0], source_2_p[1], 'o')
-
-    pixel_range_x = cartesian_point_to_pixel([cartesian_min_x, cartesian_max_x])
-    pixel_range_y = cartesian_point_to_pixel([cartesian_min_y, cartesian_max_y])
-    plt.xlim(pixel_range_x[0], pixel_range_x[1])
-    plt.ylim(pixel_range_y[0], pixel_range_y[1])
-
-
-    t = np.linspace(0, 3, 10)
-    f = lambda t: np.array([t, t**2])
-    curve = np.array([cartesian_point_to_pixel(f(x)) for x in t])
-    plt.plot(curve[:, 0], curve[:, 1])
-    print(curve)
-    plt.show()
+    polar = [3, 90]
+    cartesian = polar_to_cartesian(polar, angle = "deg")
+    print(cartesian)
 
