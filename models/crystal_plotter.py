@@ -14,7 +14,7 @@ def build_lattice(a, b, c = [None], n_cells = None):
     """
     
     if c[0] == None:
-        if n_cells == None:
+        if n_cells is None:
             n_cells = 20 #needed as 2D and 3D plotting require different default sizes
         n1 = np.arange(-n_cells //2, n_cells//2 + 1)
         n2 = np.arange(-n_cells //2, n_cells//2 + 1)
@@ -24,7 +24,7 @@ def build_lattice(a, b, c = [None], n_cells = None):
         return X, Y
     else:
         assert(len(a) == 3 and len(b) == 3 and len(c) == 3)
-        if n_cells == None:
+        if n_cells is None:
             n_cells = 5
         n1 = np.arange(-n_cells //2, n_cells//2 + 1)
         n2 = np.arange(-n_cells //2, n_cells//2 + 1)
@@ -38,7 +38,7 @@ def build_lattice(a, b, c = [None], n_cells = None):
 
 def plot_lattice(X, Y, Z = [None]):
     fig = plt.figure()
-    if Z[0] == None:
+    if Z[0] is None:
         plt.scatter(X, Y, color = 'k')
         plt.plot(0, 0, 'o', markersize = 12, color = 'b')
         plt.quiver(0, 0, a[0], a[1], color = 'r', label = 'a vector', angles = 'xy', scale_units = 'xy', scale = 1)
@@ -73,7 +73,7 @@ def create_principal_vectors(type = "square", lengths = np.array([1, 1, 1]), ang
 
 
 if __name__ == "__main__":
-    a, b = create_principal_vectors()
-    X, Y = build_lattice(a, b)
-    plot_lattice(X, Y)
+    a, b, c = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    X, Y, Z = build_lattice(a, b, c)
+    plot_lattice(X, Y, Z)
     
