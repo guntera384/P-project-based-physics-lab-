@@ -15,7 +15,7 @@ def build_lattice(a, b, c=[None], n_cells=None):
     """
 
     if c[0] == None:
-        if n_cells == None:
+        if n_cells is None:
             n_cells = 20  # needed as 2D and 3D plotting require different default sizes
         n1 = np.arange(-n_cells // 2, n_cells // 2 + 1)
         n2 = np.arange(-n_cells // 2, n_cells // 2 + 1)
@@ -25,7 +25,7 @@ def build_lattice(a, b, c=[None], n_cells=None):
         return X, Y
     else:
         assert len(a) == 3 and len(b) == 3 and len(c) == 3
-        if n_cells == None:
+        if n_cells is None:
             n_cells = 5
         n1 = np.arange(-n_cells // 2, n_cells // 2 + 1)
         n2 = np.arange(-n_cells // 2, n_cells // 2 + 1)
@@ -103,4 +103,4 @@ if __name__ == "__main__":
     X, Y, Z = build_lattice(a, b, c)
     print(Z)
     plot_lattice(X, Y, Z)
-
+# |%%--%%| <m3zOWV8rB7|LsWfgtWOvn>
