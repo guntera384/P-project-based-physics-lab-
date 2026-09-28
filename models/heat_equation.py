@@ -1,9 +1,9 @@
-import numpy as np
 import matplotlib.pyplot as plt
-from numpy import sin, cos, exp, pi
+import numpy as np
+from numpy import cos, exp, pi, sin
 
 
-def freq_fourier(X, Y, Z = [None]):
+def freq_fourier(X, Y, Z=[None]):
     """
     function to give correct frequencies for fourier transforms
     Numpy only implements the 1D case
@@ -16,6 +16,7 @@ def freq_fourier(X, Y, Z = [None]):
         kx = np.fft.fftfreq(len(x), dx)
         ky = np.fft.fftfreq(len(y), dy)
         return kx, ky
+
 
 def fourier_spectral_gradient_2D(X, Y, func_value):
     """
@@ -30,6 +31,7 @@ def fourier_spectral_gradient_2D(X, Y, func_value):
     Dy = np.fft.ifft2(Dy_cf)
     return Dx, Dy
 
+
 def fourier_spectral_laplacian_2D(X, Y, func_value):
     """
     compute the laplacian with fourier interpolation
@@ -38,12 +40,13 @@ def fourier_spectral_laplacian_2D(X, Y, func_value):
     kx, ky = freq_fourier(X, Y)
     Kx, Ky = np.meshgrid(kx, ky)
     cf = np.fft.fft2(func_value)
-    D2_cf = (2j * pi)**2 *(Kx**2 + Ky**2) * cf
+    D2_cf = (2j * pi) ** 2 * (Kx**2 + Ky**2) * cf
     laplacian = np.fft.ifft2(D2_cf)
     return laplacian
 
+
 def make_square_symmetric(X, Y, U):
-    Nx = len(X[0]) #resolution of x direction
+    Nx = len(X[0])  # resolution of x direction
     Ny = len(Y[:, 0])
 
     dx = X[0, 1] - X[0, 0]
@@ -59,9 +62,10 @@ def make_square_symmetric(X, Y, U):
     V = np.concatenate((np.flip(V, axis=1), V), axis=1)
     return X_new, Y_new, V
 
-def propagator_heat_equation(X, Y, U, dt, alpha = 1, Neumann = True):
+
+def propagator_heat_equation(X, Y, U, dt, alpha=1, Neumann=True):
     """
-    input: 
+    input:
         X, Y: real space lattices of the function
         U: scalar function of X and Y -> U(X, Y)
         dt: timestep
@@ -76,16 +80,17 @@ def propagator_heat_equation(X, Y, U, dt, alpha = 1, Neumann = True):
         cf0 = np.fft.fft2(U)
         kx, ky = freq_fourier(X, Y)
         Kx, Ky = np.meshgrid(kx, ky)
-        cf_t = cf0 * np.exp(-alpha * 4 * pi**2 *(Kx**2 + Ky**2) * dt)
+        cf_t = cf0 * np.exp(-alpha * 4 * pi**2 * (Kx**2 + Ky**2) * dt)
         U_t = np.fft.ifft2(cf_t)
         return U_t[Nx:, Ny:]
     if not Neumann:
         cf0 = np.fft.fft2(U)
         kx, ky = freq_fourier(X, Y)
         Kx, Ky = np.meshgrid(kx, ky)
-        cf_t = cf0 * np.exp(-alpha * 4 * pi**2 *(Kx**2 + Ky**2) * dt)
+        cf_t = cf0 * np.exp(-alpha * 4 * pi**2 * (Kx**2 + Ky**2) * dt)
         U_t = np.fft.ifft2(cf_t)
         return U_t
+
 
 if __name__ == "__main__":
     x = np.array([1, 2, 3, 4])
@@ -97,20 +102,20 @@ if __name__ == "__main__":
     alpha_copper = 1.16e-4
     alpha = 1
     resolution = 30
-    x = np.linspace(0, 1, resolution, endpoint = False)
-    y = np.linspace(0.1, 1.1, resolution, endpoint = False)
-        
+    x = np.linspace(0, 1, resolution, endpoint=False)
+    y = np.linspace(0.1, 1.1, resolution, endpoint=False)
+
     X, Y = np.meshgrid(x, y)
-    #U = sin(2 * pi *(X + Y)) + cos(2 * pi * X) #initial state
+    # U = sin(2 * pi *(X + Y)) + cos(2 * pi * X) #initial state
     U = np.zeros_like(X)
-    U[:resolution//4, :resolution//4] = 1
-            
-    U0 = propagator_heat_equation(X, Y, U, 0, alpha = alpha_copper)
-    U1 = propagator_heat_equation(X, Y, U, 3e2, alpha = alpha_copper, Neumann = True)
-        
-    fig, ax = plt.subplots(1, 2, figsize = (10, 4))
+    U[: resolution // 4, : resolution // 4] = 1
+
+    U0 = propagator_heat_equation(X, Y, U, 0, alpha=alpha_copper)
+    U1 = propagator_heat_equation(X, Y, U, 3e2, alpha=alpha_copper, Neumann=True)
+
+    fig, ax = plt.subplots(1, 2, figsize=(10, 4))
     mesh0 = ax[0].pcolormesh(X, Y, np.real(U0))
     mesh1 = ax[1].pcolormesh(X, Y, np.real(U1))
-    plt.colorbar(mesh0, ax = ax[0])
-    plt.colorbar(mesh1, ax = ax[1])
+    plt.colorbar(mesh0, ax=ax[0])
+    plt.colorbar(mesh1, ax=ax[1])
     plt.show()
