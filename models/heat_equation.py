@@ -45,13 +45,16 @@ def fourier_spectral_laplacian_2D(X, Y, func_value):
 def make_square_symmetric(X, Y, U):
     Nx = len(X[0]) #resolution of x direction
     Ny = len(Y[:, 0])
+
     dx = X[0, 1] - X[0, 0]
-    Lx = Nx * dx
     dy = Y[1, 0] - Y[0, 0]
+    Lx = Nx * dx
     Ly = Ny * dy
+
     x_new = X[0, 0] - Lx + dx * np.arange(2 * Nx)
     y_new = Y[0, 0] - Ly + dy * np.arange(2 * Ny)
     X_new, Y_new = np.meshgrid(x_new, y_new)
+
     V = np.concatenate((np.flip(U, axis=0), U), axis=0)
     V = np.concatenate((np.flip(V, axis=1), V), axis=1)
     return X_new, Y_new, V
@@ -69,7 +72,6 @@ def propagator_heat_equation(X, Y, U, dt, alpha = 1, Neumann = True):
     Nx = len(X[0])
     Ny = len(Y[:, 0])
     if Neumann:
-        #create new grid where function is mirrored
         X, Y, U = make_square_symmetric(X, Y, U)
         cf0 = np.fft.fft2(U)
         kx, ky = freq_fourier(X, Y)
@@ -78,8 +80,12 @@ def propagator_heat_equation(X, Y, U, dt, alpha = 1, Neumann = True):
         U_t = np.fft.ifft2(cf_t)
         return U_t[Nx:, Ny:]
     if not Neumann:
-        print("not implemented yet")
-        return None
+        cf0 = np.fft.fft2(U)
+        kx, ky = freq_fourier(X, Y)
+        Kx, Ky = np.meshgrid(kx, ky)
+        cf_t = cf0 * np.exp(-alpha * 4 * pi**2 *(Kx**2 + Ky**2) * dt)
+        U_t = np.fft.ifft2(cf_t)
+        return U_t
 
 if __name__ == "__main__":
     x = np.array([1, 2, 3, 4])
@@ -100,7 +106,7 @@ if __name__ == "__main__":
     U[:resolution//4, :resolution//4] = 1
             
     U0 = propagator_heat_equation(X, Y, U, 0, alpha = alpha_copper)
-    U1 = propagator_heat_equation(X, Y, U, 3e2, alpha = alpha_copper)
+    U1 = propagator_heat_equation(X, Y, U, 3e2, alpha = alpha_copper, Neumann = True)
         
     fig, ax = plt.subplots(1, 2, figsize = (10, 4))
     mesh0 = ax[0].pcolormesh(X, Y, np.real(U0))
