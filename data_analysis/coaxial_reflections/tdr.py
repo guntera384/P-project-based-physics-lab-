@@ -1,15 +1,14 @@
 """TDR analysis: find echoes in the step response and compute cable length, Gamma_L and Z_L."""
 
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy.signal import savgol_filter, find_peaks
+from scipy.signal import find_peaks, savgol_filter
 
-from pathlib import Path
-
-#script_dir = Path(__file__).parent
-#data_root = script_dir / "test_data" / "20260928_Short"
-
+# script_dir = Path(__file__).parent
+# data_root = script_dir / "test_data" / "20260928_Short"
 
 
 def load_data(path):
@@ -25,6 +24,7 @@ def load_folder(folder):
     U_all = np.array([load_data(f)[1] for f in files])
     return t, U_all
 
+
 def data_preparation(t, U_all, t_min=-0.5, t_max=5, t_base=-0.05):
     """Average, smooth, crop to [t_min, t_max] and subtract the baseline."""
     U_mean = U_all.mean(axis=0)
@@ -35,6 +35,7 @@ def data_preparation(t, U_all, t_min=-0.5, t_max=5, t_base=-0.05):
     U = U - U[t < t_base].mean()  # baseline = signal before the step
     return t, U
 
+
 def find_jumps(t, U):
     """Find steps in U as peaks in |dU/dt|."""
     dt = t[1] - t[0]
@@ -42,7 +43,8 @@ def find_jumps(t, U):
     dU_abs = np.abs(dU)  # abs: catch positive and negative reflections
     thr = 0.05 * np.max(dU_abs)  # ignore slopes below 5 % of max
     idx, _ = find_peaks(dU_abs, height=thr, distance=max(1, int(0.05 / dt)))
-    if len(idx) == 0: raise Exception("No jumps found.")
+    if len(idx) == 0:
+        raise Exception("No jumps found.")
     print(f"Found {len(idx)} jumps.")
     return idx, dU, thr
 
@@ -57,16 +59,17 @@ def plateau_levels(t, U, idx, margin=0.02):
     return np.array(levels)
 
 
-def find_ZL(t, U, idx, Z_0=50., Z_S=50., A=1):
+def find_ZL(t, U, idx, Z_0=50.0, Z_S=50.0, A=1):
     """Echo times, Gamma_L and Z_L from the first echo. A = attenuation."""
     t_p = t[idx]
     dt_echo = t_p[1:] - t_p[0]  # echos relative to the incident step
     levels = plateau_levels(t, U, idx)
 
-    if len(levels) < 2: raise Exception("No Echo found.")
+    if len(levels) < 2:
+        raise Exception("No Echo found.")
 
     print(f"Calculating Gamma_L and Z_L with Z_0 = {Z_0} and Z_S = {Z_S}.\n")
-    Gamma_S = (Z_S - Z_0)/(Z_S + Z_0)
+    Gamma_S = (Z_S - Z_0) / (Z_S + Z_0)
 
     V1 = levels[0]
     dV = np.diff(levels)
@@ -75,9 +78,9 @@ def find_ZL(t, U, idx, Z_0=50., Z_S=50., A=1):
     return dt_echo, Gamma_L, Z_L
 
 
-def validation_plot(folder_path, plot_title, Z_0=50., Z_S=50., A=1):
+def validation_plot(folder_path, plot_title, Z_0=50.0, Z_S=50.0, A=1):
     """Run the full analysis on one folder and plot derivative + detected plateaus."""
-    print("\n", 5*"=", plot_title, 5*"=")
+    print("\n", 5 * "=", plot_title, 5 * "=")
     t, U_all = load_folder(folder_path)
     t, U = data_preparation(t, U_all)
 
@@ -87,7 +90,8 @@ def validation_plot(folder_path, plot_title, Z_0=50., Z_S=50., A=1):
 
     # Top: derivative with detection threshold
     ax[0].plot(t, dU, label="Derivative")
-    ax[0].axhline(thr, color="green", ls="--", label="Threshold"); ax[0].axhline(-thr, color="green", ls="--")
+    ax[0].axhline(thr, color="green", ls="--", label="Threshold")
+    ax[0].axhline(-thr, color="green", ls="--")
     ax[0].set_xlabel(r"t [$\mu$s]")
     ax[0].set_ylabel("dV/dt")
     ax[0].set_title(f"Derivative of Signas ({plot_title})")
@@ -127,7 +131,15 @@ def validation_plot(folder_path, plot_title, Z_0=50., Z_S=50., A=1):
         print("Analysis failed:", e)
         dt_echo = Gamma_L = Z_L = None
 
-    return {"t": t, "U": U, "idx": idx, "levels": levels, "dt_echo": dt_echo, "Gamma_L": Gamma_L, "Z_L": Z_L}
+    return {
+        "t": t,
+        "U": U,
+        "idx": idx,
+        "levels": levels,
+        "dt_echo": dt_echo,
+        "Gamma_L": Gamma_L,
+        "Z_L": Z_L,
+    }
 
 
 if __name__ == "__main__":
