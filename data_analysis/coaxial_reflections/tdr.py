@@ -94,7 +94,7 @@ def validation_plot(folder_path, plot_title, Z_0=50.0, Z_S=50.0, A=1):
     ax[0].axhline(-thr, color="green", ls="--")
     ax[0].set_xlabel(r"t [$\mu$s]")
     ax[0].set_ylabel("dV/dt")
-    ax[0].set_title(f"Derivative of Signas ({plot_title})")
+    ax[0].set_title(f"Derivative of Signal ({plot_title})")
     ax[0].grid()
     ax[0].legend()
 
