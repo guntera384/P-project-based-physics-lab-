@@ -7,11 +7,15 @@ Transmission line
 .param sinamp=1
 .param pulseamp=0
 .param freq=1k
+.param td=0
+.param intind=0.38u ; microhenry
+.param intcap=67p ; picofarad
+.param coaxlen=50 ; metres
 
 * Source: sine (also the AC stimulus) in series with a pulse. coax.py zeroes
 * whichever amplitude is not wanted, which replaces the old .IF/.ELSE.
 Vsin 1 5 DC 0 AC 1 SIN(0 {sinamp} {freq})
-Vpul 5 0 PULSE(0 {pulseamp} 0 1n 1n 1u)
+Vpul 5 0 PULSE(0 {pulseamp} {td} 1n 1n 50u)
 
 * Reference sine for the phase comparison (now with AC 1, so it has an AC value)
 Vref 23 0 DC 0 AC 1 SIN(0 {sinamp} {freq})
@@ -19,5 +23,5 @@ Vref 23 0 DC 0 AC 1 SIN(0 {sinamp} {freq})
 r1 1 2 50                ; source resistance
 r55 2 0 1meg             ; oscilloscope input
 o1 2 0 4 0 LOSSYMOD
-.model LOSSYMOD ltra r={intres} l=0.38u c=67p len=50   ; coax, 50 m, r in ohm/m
+.model LOSSYMOD ltra r={intres} l={intind} c={intcap} len={coaxlen}   ; coax, 50 m, r in ohm/m
 r2 4 0 {zl}              ; load
