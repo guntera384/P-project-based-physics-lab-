@@ -36,13 +36,14 @@ def data_preparation(t, U_all, t_min=-0.5, t_max=5, t_base=-0.05):
     return t, U
 
 
-def find_jumps(t, U):
-    """Find steps in U as peaks in |dU/dt|."""
+def find_jumps(t, U, thr_per=0.05):
+    """Find steps in U as peaks in |dU/dt|.
+    thr_per: percentage of max slope for find peaks."""
     dt = t[1] - t[0]
     dU = savgol_filter(U, window_length=11, polyorder=2, deriv=1, delta=dt)
     dU_abs = np.abs(dU)  # abs: catch positive and negative reflections
-    thr = 0.05 * np.max(dU_abs)  # ignore slopes below 5 % of max
-    idx, _ = find_peaks(dU_abs, height=thr, distance=max(1, int(0.05 / dt)))
+    thr = thr_per * np.max(dU_abs)  # ignore slopes below thr_per% (defeault=5%) of max
+    idx, _ = find_peaks(dU_abs, height=thr, distance=max(1, int(thr_per / dt)))
     if len(idx) == 0:
         raise Exception("No jumps found.")
     print(f"Found {len(idx)} jumps.")
@@ -78,15 +79,16 @@ def find_ZL(t, U, idx, Z_0=50.0, Z_S=50.0, A=1):
     return dt_echo, Gamma_L, Z_L
 
 
-def validation_plot(folder_path, plot_title, Z_0=50.0, Z_S=50.0, A=1):
-    """Run the full analysis on one folder and plot derivative + detected plateaus."""
+def validation_plot(folder_path, plot_title, Z_0=50.0, Z_S=50.0, A=1, thr_per=0.05):
+    """Run the full analysis on one folder and plot derivative + detected plateaus.
+    thr_per: percentage of max slope for find peaks."""
     print("\n", 5 * "=", plot_title, 5 * "=")
     t, U_all = load_folder(folder_path)
     t, U = data_preparation(t, U_all)
 
-    idx, dU, thr = find_jumps(t, U)
+    idx, dU, thr = find_jumps(t, U, thr_per)
 
-    fig, ax = plt.subplots(nrows=2, figsize=(5, 6))
+    fig, ax = plt.subplots(nrows=2, figsize=(7, 8), dpi=300)
 
     # Top: derivative with detection threshold
     ax[0].plot(t, dU, label="Derivative")
@@ -124,7 +126,7 @@ def validation_plot(folder_path, plot_title, Z_0=50.0, Z_S=50.0, A=1):
         print("Time of echo(s):", dt_echo)
         print("Gamma_L = ", Gamma_L)
         print("Z_L = ", Z_L)
-
+ 
         v = 0.66 * 299.792458  # velocity factor 0.66 * c in m/us
         print("Cable length = ", v * dt_echo[0] / 2)
     except Exception as e:
