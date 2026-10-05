@@ -29,7 +29,7 @@ def data_preparation(t, U_all, t_min=-0.5, t_max=5, t_base=-0.05):
     """Average, smooth, crop to [t_min, t_max] and subtract the baseline."""
     U_mean = U_all.mean(axis=0)
     U_smooth = savgol_filter(U_mean, window_length=11, polyorder=2)
-    mask = (t > t_min) & (t < t_max)
+    mask = (t > t_min) and (t < t_max)
     U = U_smooth[mask]
     t = t[mask]
     U = U - U[t < t_base].mean()  # baseline = signal before the step
@@ -126,7 +126,7 @@ def validation_plot(folder_path, plot_title, Z_0=50.0, Z_S=50.0, A=1, thr_per=0.
         print("Time of echo(s):", dt_echo)
         print("Gamma_L = ", Gamma_L)
         print("Z_L = ", Z_L)
- 
+
         v = 0.66 * 299.792458  # velocity factor 0.66 * c in m/us
         print("Cable length = ", v * dt_echo[0] / 2)
     except Exception as e:

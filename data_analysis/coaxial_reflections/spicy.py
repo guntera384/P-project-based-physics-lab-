@@ -22,7 +22,10 @@ from scipy.optimize import least_squares
 
 HERE = Path(__file__).resolve().parent if "__file__" in globals() else Path.cwd()
 NETLIST = HERE / "coax.cir"
-DATA = HERE / "test_data/20260928-0002_50Ohm"
+DATA = HERE / "test_data"
+DATA50 = DATA / "20260928-0002_50Ohm"
+DATA0 = DATA / "20260928_Short"
+DATAINF = DATA / "20260928-0002_Open_End"
 
 PLOT = False  # Controls whether to plot the result of each run.
 
@@ -167,7 +170,7 @@ def fit_cable(scope: Scope, start: Cable = Cable()):
         bounds=FIT_BOUNDS,
         x_scale=x0,
         diff_step=1e-3,  # ngspice output is only accurate to ~reltol (1e-3)
-        verbose=1,
+        verbose=0,
     )
 
 
@@ -175,7 +178,7 @@ def main(datafile) -> None:
     scope = Scope.from_csv(datafile)
     fit = fit_cable(scope)
     cable = Cable.from_vector(fit.x)
-    print(cable, f"cost={fit.cost:.3g}")
+    # print(cable, f"cost={fit.cost:.3g}")
     if PLOT:
         t, v = simulate_pulse(cable, scope)
         sim = np.interp(scope.t, t, v)
@@ -195,13 +198,29 @@ def main(datafile) -> None:
 
 if __name__ == "__main__":
     results = []
-    for file in DATA.glob("**/*"):
+    for file in DATA50.glob("**/*"):
         if file.is_file():
-            print(file)
+            # print(file)
             result = main(file)
             results.append(result)
-    res = np.array(results).T
-    print(np.mean(res, axis=1), np.std(res, axis=1))
+    res50 = np.array(results).T
+    print(np.mean(res50, axis=1), np.std(res50, axis=1))
+    results = []
+    for file in DATA0.glob("**/*"):
+        if file.is_file():
+            # print(file)
+            result = main(file)
+            results.append(result)
+    res50 = np.array(results).T
+    print(np.mean(res50, axis=1), np.std(res50, axis=1))
+    results = []
+    for file in DATAINF.glob("**/*"):
+        if file.is_file():
+            # print(file)
+            result = main(file)
+            results.append(result)
+    res50 = np.array(results).T
+    print(np.mean(res50, axis=1), np.std(res50, axis=1))
     real_cable = Cable.from_vector(np.mean(res, axis=1))
     f, ph = simulate_ac(real_cable, Scope.from_csv(DATA / "20260928-0002_50Ohm_01.csv"))
     ph = np.degrees(np.unwrap(np.angle(ph)))
