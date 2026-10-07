@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import subprocess
 import tempfile
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import astuple, dataclass
 from pathlib import Path
 
@@ -22,10 +23,13 @@ from scipy.optimize import least_squares
 
 HERE = Path(__file__).resolve().parent if "__file__" in globals() else Path.cwd()
 NETLIST = HERE / "coax.cir"
-DATA = HERE / "test_data"
-DATA50 = DATA / "20260928-0002_50Ohm"
-DATA0 = DATA / "20260928_Short"
-DATAINF = DATA / "20260928-0002_Open_End"
+DATA = HERE / "measured_data/dielectric"
+CABLE = "cable1"
+# DATA50 = DATA / (CABLE + "_matched/")
+DATA0 = DATA / (CABLE + "_short/")
+DATAINF = DATA / (CABLE + "_open/")
+
+print("Data and cable:", DATA, CABLE)
 
 PLOT = False  # Controls whether to plot the result of each run.
 
@@ -34,7 +38,7 @@ PLOT = False  # Controls whether to plot the result of each run.
 FIT_UNITS = np.array([1.0, 1e-6, 1e-12])
 FIT_BOUNDS = ([0, 0, 0], [10, 10, 1000])
 
-TFACTOR = 100
+TFACTOR = 1000
 # Controls accuracy of ngspice simulation. Larger = more speed, less accuracy
 
 # The global variable coax length is set in the ngspice file.
@@ -70,11 +74,14 @@ class Scope:
     t: np.ndarray
     v: np.ndarray
     load: float = 50.0
+    td: float = 0.0
 
     @classmethod
-    def from_csv(cls, path: Path) -> Scope:
+    def from_csv(cls, path: Path, load: float = 50) -> Scope:
         t, v = np.loadtxt(path, delimiter=",", skiprows=2, usecols=(0, 1), unpack=True)
-        return cls(t, v)
+        t *= 1e3
+        td = t[np.argmax(v > 0.1)]
+        return cls(t, v, load, td)
 
     @property
     def t0(self) -> float:
@@ -131,7 +138,7 @@ def simulate_pulse(cable: Cable, scope: Scope, vmax: float = 1.0):
         "zl": scope.load,
         "sinamp": 0,
         "pulseamp": vmax,
-        "td": -scope.t0 * 1e-6,  # delay the edge so the simulation can start at t = 0
+        "td": -scope.td * 1e-6,  # delay the edge so the simulation can start at t = 0
     }
     tstep, tstop = scope.dt * 1e-6 * TFACTOR, scope.span * 1e-6
     data = run_ngspice(params, f"tran {tstep} {tstop}", ["v(2)"])
@@ -170,12 +177,11 @@ def fit_cable(scope: Scope, start: Cable = Cable()):
         bounds=FIT_BOUNDS,
         x_scale=x0,
         diff_step=1e-3,  # ngspice output is only accurate to ~reltol (1e-3)
-        verbose=0,
+        verbose=1,
     )
 
 
-def main(datafile) -> None:
-    scope = Scope.from_csv(datafile)
+def main(scope) -> None:
     fit = fit_cable(scope)
     cable = Cable.from_vector(fit.x)
     # print(cable, f"cost={fit.cost:.3g}")
@@ -197,34 +203,32 @@ def main(datafile) -> None:
 
 
 if __name__ == "__main__":
-    results = []
-    for file in DATA50.glob("**/*"):
-        if file.is_file():
-            # print(file)
-            result = main(file)
-            results.append(result)
-    res50 = np.array(results).T
-    print(np.mean(res50, axis=1), np.std(res50, axis=1))
-    results = []
-    for file in DATA0.glob("**/*"):
-        if file.is_file():
-            # print(file)
-            result = main(file)
-            results.append(result)
-    res50 = np.array(results).T
-    print(np.mean(res50, axis=1), np.std(res50, axis=1))
-    results = []
-    for file in DATAINF.glob("**/*"):
-        if file.is_file():
-            # print(file)
-            result = main(file)
-            results.append(result)
-    res50 = np.array(results).T
-    print(np.mean(res50, axis=1), np.std(res50, axis=1))
+    with ThreadPoolExecutor() as ex:
+        resinf = np.array(
+            ex.map(
+                lambda file: main(Scope.from_csv(file, load=1e12)), DATAINF.glob("**/*")
+            )
+        )
+        res0 = np.array(
+            ex.map(lambda file: main(Scope.from_csv(file, load=0)), DATA0.glob("**/*"))
+        )
+
+    print(resinf)
+    print(res0)
+    print(np.mean(resinf, axis=1), np.std(resinf, axis=1))
+    print(np.mean(res0, axis=1), np.std(res0, axis=1))
+    res = resinf
     real_cable = Cable.from_vector(np.mean(res, axis=1))
-    f, ph = simulate_ac(real_cable, Scope.from_csv(DATA / "20260928-0002_50Ohm_01.csv"))
-    ph = np.degrees(np.unwrap(np.angle(ph)))
+    cmpfile = DATAINF / "cable1_open_01.csv"
+    v, t = simulate_pulse(real_cable, Scope.from_csv(cmpfile, load=1e12))
     _, ax = plt.subplots()
-    ax.semilogx(f / 1e6, ph)
-    ax.set(xlabel="MHz", ylabel="phase of V(2) vs V(23) [deg]")
+    ax.plot(v, t, label="Predicted values")
+    """
+    ax.plot(
+        np.loadtxt(cmpfile, delimiter=",", skiprows=2, usecols=(0, 1), unpack=True).T,
+        label="Measured values",
+    )
+    """
+    ax.set(xlabel="Time/$\\mu$s", ylabel="Voltage/V")
+    ax.legend()
     plt.show()
