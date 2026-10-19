@@ -127,18 +127,18 @@ def double_pendulum_angles(
     All lengths must be given in cm.
     Return:
     ang1, ang2 of the top and bottom joint relative to the neutral position (equilibrium).
-    Formulae given by derivation in calcxy.pdf
+    Formulae given by derivation (Szymon)
     Given: (0, l1-l2) expect: 0, pi
     Given: (0, l1+l2) expect: 0, 0
     """
-    char = (x**2 + y**2 - l1**2 - l2**2) / (2 * l1 * l2)
-    delta = math.acos(char)
-    c = x**2 + y**2
-    phi = math.atan(l2 * math.sin(delta) / (l1 + l2 * char))
-    theta2 = math.asin(x / c) - phi
-    theta1 = theta2 + delta
-    rval = (theta1, theta2) if not right else (theta2, theta1)
-    return rval[0] % (2 * math.pi), rval[1] % (2 * math.pi)
+    y = -y  # Read the docs for math.atan2.
+    lsr = x**2 + y**2
+    char = (lsr - l1**2 - l2**2) / (2 * l1 * l2)
+    alpha = math.acos(-char)
+    beta = math.acos((lsr + l1**2 - l2**2) / (2 * math.sqrt(lsr) * l1))
+    theta1 = math.atan2(x, y) - beta if not right else math.atan2(x, y) + beta
+    theta2 = math.pi + theta1 - alpha if not right else theta1 + alpha - math.pi
+    return theta1 % (2 * math.pi), theta2 % (2 * math.pi)
 
 
 def double_pendulum_xy(theta_1: float, theta_2: float, l1: float = 20, l2: float = 15):
