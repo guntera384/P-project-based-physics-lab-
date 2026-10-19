@@ -20,6 +20,3 @@ dependencies = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["physics_tools*"]
-
-[tool.jupytext]
-formats = "ipynb,py:percent"
