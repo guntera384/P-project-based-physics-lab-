@@ -248,7 +248,7 @@ def final_plot(res, save_dir=PLOT_DIR_FINAL):
 
     plot_title = f"{LABELS.get(res['name'], res['name'])}"
 
-    fig, ax = plt.subplots(figsize=(8, 4), dpi=300)
+    fig, ax = plt.subplots(figsize=(5, 4), dpi=300)
 
     # signal with detected edges and plateaus
     ax.plot(t, U, label="Signal")

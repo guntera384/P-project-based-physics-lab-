@@ -4,20 +4,18 @@ Transmission line
 * The analyses and .end are appended by coax.py.
 .param zl=50
 .param intres=0.05
-.param pulseamp=1.2
+.param pulseamp=1
 .param td=1u
 
-* Source: sine (also the AC stimulus) in series with a pulse. coax.py zeroes
-* whichever amplitude is not wanted, which replaces the old .IF/.ELSE.
 Vpul 1 0 PULSE(0 {pulseamp} {td} 1n 1n 10m)
 
 r1 1 2 50                ; source resistance
 r55 2 0 1meg             ; oscilloscope input
 
-t50 2 0 3 0 z0=50 td=0.014us ; Initial cable
-t3 3 0 4 0 z0=50 td=0.722us ; Cable 3
-t1 4 0 5 0 z0=50 td=0.283us ; Cable 1
-t2 4 0 6 0 z0=75 td=0.559us ; Cable 2
+t50 2 0 3 11 z0=50 td={0.007us} ; Initial cable
+t3 3 11 4 12 z0=50 td={0.361us} ; Cable 3
+t1 4 12 5 0 z0=50 td=0.141us ; Cable 1
+t2 4 12 6 0 z0=75 td={0.279us} ; Cable 2
 
 r10 6 0 0
 
