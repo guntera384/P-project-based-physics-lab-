@@ -1,0 +1,23 @@
+Transmission line
+* This file was refactored by Claude 5.5.
+* Defaults only; coax.py overrides them with alterparam.
+* The analyses and .end are appended by coax.py.
+.param zl=50
+.param intres=0.05
+.param pulseamp=1
+.param td=1u
+
+Vpul 1 0 PULSE(0 {pulseamp} {td} 1n 1n 10m)
+
+r1 1 2 50                ; source resistance
+r55 2 0 1meg             ; oscilloscope input
+
+t50 2 0 3 11 z0=50 td={0.007us} ; Initial cable
+t3 3 11 4 12 z0=50 td={0.361us} ; Cable 3
+t1 4 12 5 0 z0=75 td=0.141us ; Cable 1
+t2 4 12 6 0 z0=75 td={0.279us} ; Cable 2
+
+r10 6 0 10
+
+.tran 0.001u 5u 
+.plot tran v(2)
