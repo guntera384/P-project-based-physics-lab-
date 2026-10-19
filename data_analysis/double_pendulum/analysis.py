@@ -1,6 +1,7 @@
 # ---
 # jupyter:
 #   jupytext:
+#     formats: ipynb,py:percent
 #     text_representation:
 #       extension: .py
 #       format_name: percent
@@ -12,18 +13,23 @@
 #     name: pendulum-env
 # ---
 
-# %% [markdown]
-#
 # %%
-from physics_tools.coordinates import double_pendulum_xy, double_pendulum_angles
 import math
+
 import numpy as np
+
+# %%
+from physics_tools.coordinates import double_pendulum_angles, double_pendulum_xy
+
 dpxy = double_pendulum_xy
 dpc = double_pendulum_angles
 
 # %%
-print(norm(array(dpxy(radians(80), radians(80)))))
 print(dpxy(0, 0))
 print(dpxy(0, np.pi))
 print(dpc(5, 0, right=True))
 dpxy(*dpc(-10, 0, True))
+# %%
+
+# %%
+import matplotlib.pyplot as plt
