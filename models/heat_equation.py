@@ -16,6 +16,16 @@ def freq_fourier(X, Y, Z=[None]):
         kx = np.fft.fftfreq(len(x), dx)
         ky = np.fft.fftfreq(len(y), dy)
         return kx, ky
+    else: 
+        #X, Y, Z passes my meshgrid with indexing = 'ij'
+        x = X[:, 0, 0]
+        y = Y[0, :, 0]
+        z = Z[0, 0, :]
+        dx = x[1]-x[0]; dy = y[1]-y[0]; dz = z[1]-z[0] 
+        kx = np.fft.fftfreq(len(x), dx)
+        ky = np.fft.fftfreq(len(y), dy)
+        kz = np.fft.fftfreq(len(z), dz)
+        return kx, ky, kz
 
 
 def fourier_spectral_gradient_2D(X, Y, func_value):
@@ -31,6 +41,20 @@ def fourier_spectral_gradient_2D(X, Y, func_value):
     Dy = np.fft.ifft2(Dy_cf)
     return Dx, Dy
 
+def fourier_spectral_gradient_3D(X, Y, Z, func_value):
+    """
+    fucntion currently assumes a 3D array of data points to compute the gradient
+    """
+    kx, ky, kz = freq_fourier(X, Y, Z)
+    Kx, Ky, Kz = np.meshgrid(kx, ky, kz, indexing = 'ij')
+    cf = np.fft.fftn(func_value)
+    Dx_cf = 2j * pi * Kx * cf
+    Dy_cf = 2j * pi * Ky * cf
+    Dz_cf = 2j * pi * Kz * cf
+    Dx = np.fft.ifftn(Dx_cf)
+    Dy = np.fft.ifftn(Dy_cf)
+    Dz = np.fft.ifftn(Dz_cf)
+    return Dx, Dy, Dz
 
 def fourier_spectral_laplacian_2D(X, Y, func_value):
     """
@@ -43,7 +67,6 @@ def fourier_spectral_laplacian_2D(X, Y, func_value):
     D2_cf = (2j * pi) ** 2 * (Kx**2 + Ky**2) * cf
     laplacian = np.fft.ifft2(D2_cf)
     return laplacian
-
 
 def make_square_symmetric(X, Y, U):
     Nx = len(X[0])  # resolution of x direction
@@ -61,7 +84,6 @@ def make_square_symmetric(X, Y, U):
     V = np.concatenate((np.flip(U, axis=0), U), axis=0)
     V = np.concatenate((np.flip(V, axis=1), V), axis=1)
     return X_new, Y_new, V
-
 
 def propagator_heat_equation(X, Y, U, dt, alpha=1, Neumann=True):
     """
@@ -91,14 +113,7 @@ def propagator_heat_equation(X, Y, U, dt, alpha=1, Neumann=True):
         U_t = np.fft.ifft2(cf_t)
         return U_t
 
-
-if __name__ == "__main__":
-    x = np.array([1, 2, 3, 4])
-    y = np.array([0.1, 0.2, 0.3, 0.4])
-    X, Y = np.meshgrid(x, y)
-    U = X + Y
-    X, Y, V = make_square_symmetric(X, Y, U)
-
+def test_plot_2D():
     alpha_copper = 1.16e-4
     alpha = 1
     resolution = 30
@@ -107,8 +122,8 @@ if __name__ == "__main__":
 
     X, Y = np.meshgrid(x, y)
     # U = sin(2 * pi *(X + Y)) + cos(2 * pi * X) #initial state
-    U = np.zeros_like(X)
-    U[: resolution // 4, : resolution // 4] = 1
+    U = np.ones_like(X) * 300
+    U[: resolution // 4, : resolution // 4] = 400
 
     U0 = propagator_heat_equation(X, Y, U, 0, alpha=alpha_copper)
     U1 = propagator_heat_equation(X, Y, U, 3e2, alpha=alpha_copper, Neumann=True)
@@ -119,3 +134,38 @@ if __name__ == "__main__":
     plt.colorbar(mesh0, ax=ax[0])
     plt.colorbar(mesh1, ax=ax[1])
     plt.show()
+
+def test_fourier_gradient():
+    x = np.linspace(0, 1, 100, endpoint = False)
+    y = np.linspace(0, 1, 80, endpoint = False)
+    z = np.linspace(0, 1, 60, endpoint = False)
+    X, Y, Z = np.meshgrid(x, y, z, indexing = 'ij')
+
+    test_vals = sin(2*pi*X) * cos(4*pi*Y) * sin(6*pi*Z)
+    Dx_trig, Dy_trig, Dz_trig = np.real(fourier_spectral_gradient_3D(X, Y, Z, test_vals))
+    Dx_func = 2*pi*cos(2*pi*X) * cos(4*pi*Y) * sin(6*pi*Z)
+    Dy_func = -4*pi*sin(2*pi*X) * sin(4*pi*Y) * sin(6*pi*Z)
+    Dz_func = 6*pi*sin(2*pi*X) * cos(4*pi*Y) * cos(6*pi*Z)
+    
+    error_x = np.max(np.abs(Dx_trig - Dx_func))
+    error_y = np.max(np.abs(Dy_trig - Dy_func))
+    error_z = np.max(np.abs(Dz_trig - Dz_func))
+    print(f"errors in x, y, z = {error_x}, {error_y}, {error_z}")
+
+
+
+if __name__ == "__main__":
+    test_fourier_gradient()
+    """resolution = 11
+        x = np.linspace(0, 1, resolution)
+        y = np.linspace(0, 1, resolution)
+        z = np.linspace(0, 1, resolution)
+        X, Y, Z = np.meshgrid(x, y, z, indexing = 'ij')
+        x_test = X[:, 0, 0]
+        y_test = Y[0, :, 0]
+        z_test = Z[0, 0, :]
+        test_func = sin(2 * pi * X) + np.ones_like(Y) + 3 * cos(4 * pi * Z)
+        Dx, Dy, Dz = np.real(fourier_spectral_gradient_3D(X, Y, Z, test_func))
+        ax = plt.figure().add_subplot(projection='3d')
+        ax.quiver(X, Y, Z, Dx, Dy, Dz, length = 0.1, normalize = True)
+        plt.show()"""
