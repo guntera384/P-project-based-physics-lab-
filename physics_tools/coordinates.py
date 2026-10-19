@@ -89,6 +89,7 @@ def double_pendulum_conv(
     w_p is the horizontal distance from the right edge of the left rail to the left edge of the rod holder.
     h_p 
     """
+    return 0
 
 
 
