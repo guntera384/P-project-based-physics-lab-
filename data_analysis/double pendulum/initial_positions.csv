@@ -1,0 +1,14 @@
+# position x, position y, center joint: up /down/straight, flip: yes/no
+25.0, 30.5, straight, 0
+20.3, 22.5, straight, 0
+17.6, 18.0, up, 0
+13.7, 14.8, down, 0
+12.3, 9.8, down, 0
+12.4, 9.2, down, 0
+12.3, 8.6, down, 0
+11.7, 3.5, down, 1
+11.6, 0.0, down, 1
+12.4, 3.2, down, 1
+13.2, 7.2, down, 1
+14.5, 10.9,down, 1
+17.3, 16.0, down, 1
