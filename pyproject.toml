@@ -2,7 +2,6 @@
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
-
 [project]
 name = "pplus-physics-tools"
 version = "0.1.0"
@@ -15,7 +14,9 @@ dependencies = [
     "scipy"
 ]
 
+[tool.setuptools]
+packages = ["physics_tools"]
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["physics_tools*"]
+#[tool.setuptools.packages.find]
+#where = ["."]
+#include = ["physics_tools*"]
