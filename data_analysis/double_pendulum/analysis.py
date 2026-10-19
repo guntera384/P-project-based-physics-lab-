@@ -29,3 +29,7 @@ print(dpxy(0, 0))
 print(dpxy(0, np.pi))
 print(dpc(5, 0, right=True))
 dpxy(*dpc(-10, 0, True))
+# %%
+
+# %%
+import matplotlib.pyplot as plt
