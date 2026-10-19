@@ -80,17 +80,17 @@ def polar_to_cartesian(polar, angle="rad"):
         theta = deg_to_rad(theta)
     return np.array([r * cos(theta), r * sin(theta)])
 
+
 def double_pendulum_conv(
-        w_p: float, h_p: float, right: bool = False, 
-        w_f: float = , h_f: float = , h_j: float =
-        ):
+    w_p: float, h_p: float, right: bool, w_f: float, h_f: float, h_j: float
+):
     """
     Converts Philipp's measurement format to an input that double_pendulum_angles can read.
     w_p is the horizontal distance from the right edge of the left rail to the left edge of the rod holder.
-    h_p 
+    h_p is the vertical distance from the pendulum suspension bar to the rod holder bar.
+
     """
     return 0
-
 
 
 def double_pendulum_angles(
@@ -118,8 +118,9 @@ def double_pendulum_angles(
     theta1 = theta2 + delta
     return theta1, theta2
 
-def double_pendulum_xy(theta_1: float, theta2: float, l1: float = 20, l2: float = 15):
-    return l1 * sin(theta_1) + l2 * sin(theta_2), - l1 * cos(theta_1) - l2 * cos(theta_2)
+
+def double_pendulum_xy(theta_1: float, theta_2: float, l1: float = 20, l2: float = 15):
+    return l1 * sin(theta_1) + l2 * sin(theta_2), -l1 * cos(theta_1) - l2 * cos(theta_2)
 
 
 if __name__ == "__main__":
