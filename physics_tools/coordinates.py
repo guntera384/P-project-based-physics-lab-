@@ -1,4 +1,5 @@
 import math
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -85,6 +86,7 @@ def safe_acos(i: float):
     if abs(i) <= 1:
         return math.acos(i)
     elif abs(i) <= 1.1:
+        raise RuntimeWarning(f"{i} is not in the correct range for acos, rounding.")
         return math.acos(int(i))
     else:
         raise ValueError(f"{i} too far outside range!")
