@@ -4,4 +4,4 @@ repos:
     hooks:
       - id: jupytext
         args: [--sync]
-        files: \.ipynb$
+        files: ^data_analysis/pendulum/(analysis|plotting)\.(ipynb|py)$

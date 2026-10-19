@@ -14,10 +14,10 @@
 # ---
 
 # %%
-import math
-
 import numpy as np
 
+# %% [markdown]
+#
 # %%
 from physics_tools.coordinates import double_pendulum_angles, double_pendulum_xy
 
@@ -30,6 +30,3 @@ print(dpxy(0, np.pi))
 print(dpc(5, 0, right=True))
 dpxy(*dpc(-10, 0, True))
 # %%
-
-# %%
-import matplotlib.pyplot as plt
