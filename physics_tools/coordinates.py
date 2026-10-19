@@ -82,15 +82,36 @@ def polar_to_cartesian(polar, angle="rad"):
 
 
 def double_pendulum_conv(
-    w_p: float, h_p: float, right: bool, w_f: float, h_f: float, h_j: float
+    w_p: float,
+    h_p: float,
+    w_f: float = 1.03,
+    h_f: float = 1.1,
+    h_j: float = 1.3,
+    l_1: float = 47.5,
 ):
     """
-    Converts Philipp's measurement format to an input that double_pendulum_angles can read.
+    Converts Philipp's measurement format to an input that double_pendulum_angles can read, i.e. distance to top joint, cf. double_pendulum_angles' docstring.
     w_p is the horizontal distance from the right edge of the left rail to the left edge of the rod holder.
-    h_p is the vertical distance from the pendulum suspension bar to the rod holder bar.
-
+    h_p is the vertical distance from the pendulum suspension bar to the rod holder bar,
+    w_f is the half-width of the rod holder, h_f is the height of the rod holder,
+    h_j is the height of the top joint holder, l_1 is the half-width of the rack,
+    i.e. the horizontal distance from the right edge of the left bar to the top joint.
     """
-    return 0
+    return (w_p + w_f - l_1), (h_p + h_f - h_j)
+
+
+def double_pendulum_inv(
+    x: float,
+    y: float,
+    w_f: float = 1.03,
+    h_f: float = 1.1,
+    h_j: float = 1.3,
+    l_1: float = 47.5,
+):
+    """
+    Inverts double_pendulum_conv, i.e. turns x,y into w_p, h_p
+    """
+    return (x - w_f + l_1), (y - h_f + h_j)
 
 
 def double_pendulum_angles(
@@ -120,6 +141,10 @@ def double_pendulum_angles(
 
 
 def double_pendulum_xy(theta_1: float, theta_2: float, l1: float = 20, l2: float = 15):
+    """
+    Inverts double_pendulum_angles, i.e. converts two angles into (x,y) coordinates
+    as given in the above description.
+    """
     return l1 * sin(theta_1) + l2 * sin(theta_2), -l1 * cos(theta_1) - l2 * cos(theta_2)
 
 
