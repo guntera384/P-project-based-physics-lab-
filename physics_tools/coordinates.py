@@ -137,7 +137,8 @@ def double_pendulum_angles(
     phi = math.atan(l2 * math.sin(delta) / (l1 + l2 * char))
     theta2 = math.asin(x / c) - phi
     theta1 = theta2 + delta
-    return theta1, theta2
+    rval = (theta1, theta2) if not right else (theta2, theta1)
+    return rval[0] % (2 * math.pi), rval[1] % (2 * math.pi)
 
 
 def double_pendulum_xy(theta_1: float, theta_2: float, l1: float = 20, l2: float = 15):
