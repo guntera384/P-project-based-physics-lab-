@@ -33,7 +33,7 @@ def fourier_spectral_gradient_2D(X, Y, func_value):
     fucntion currently assumes a 2D array of data points to compute the gradient
     """
     kx, ky = freq_fourier(X, Y)
-    Kx, Ky = np.meshgrid(kx, ky)
+    Kx, Ky = np.meshgrid(kx, ky, indexing = 'ij')
     cf = np.fft.fft2(func_value)
     Dx_cf = 2j * pi * Kx * cf
     Dy_cf = 2j * pi * Ky * cf
@@ -62,11 +62,19 @@ def fourier_spectral_laplacian_2D(X, Y, func_value):
     currently limited to scalar functions
     """
     kx, ky = freq_fourier(X, Y)
-    Kx, Ky = np.meshgrid(kx, ky)
+    Kx, Ky = np.meshgrid(kx, ky, indexing = 'ij')
     cf = np.fft.fft2(func_value)
     D2_cf = (2j * pi) ** 2 * (Kx**2 + Ky**2) * cf
     laplacian = np.fft.ifft2(D2_cf)
     return laplacian
+
+def fourier_spectral_laplacian_3D(X, Y, func_value):
+    """
+    compute the laplacian with fourier interpolation
+    currently limited to scalar functions
+    """
+    kx, ky, kz = freq_fourier(X, Y, Z)
+    #implement rest later
 
 def make_square_symmetric(X, Y, U):
     Nx = len(X[0])  # resolution of x direction
@@ -146,7 +154,7 @@ def test_fourier_gradient():
     Dx_func = 2*pi*cos(2*pi*X) * cos(4*pi*Y) * sin(6*pi*Z)
     Dy_func = -4*pi*sin(2*pi*X) * sin(4*pi*Y) * sin(6*pi*Z)
     Dz_func = 6*pi*sin(2*pi*X) * cos(4*pi*Y) * cos(6*pi*Z)
-    
+
     error_x = np.max(np.abs(Dx_trig - Dx_func))
     error_y = np.max(np.abs(Dy_trig - Dy_func))
     error_z = np.max(np.abs(Dz_trig - Dz_func))
