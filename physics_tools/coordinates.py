@@ -1,4 +1,5 @@
 import math
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -81,23 +82,35 @@ def polar_to_cartesian(polar, angle="rad"):
     return np.array([r * cos(theta), r * sin(theta)])
 
 
+def safe_acos(i: float):
+    if abs(i) <= 1:
+        return math.acos(i)
+    elif abs(i) <= 1.1:
+        raise RuntimeWarning(f"{i} is not in the correct range for acos, rounding.")
+        return math.acos(int(i))
+    else:
+        raise ValueError(f"{i} too far outside range!")
+
+
 def double_pendulum_conv(
     w_p: float,
     h_p: float,
     w_f: float = 1.03,
     h_f: float = 1.1,
     h_j: float = 1.3,
+    h_b: float = 3.0,
     l_1: float = 47.5,
 ):
     """
     Converts Philipp's measurement format to an input that double_pendulum_angles can read, i.e. distance to top joint, cf. double_pendulum_angles' docstring.
     w_p is the horizontal distance from the right edge of the left rail to the left edge of the rod holder.
-    h_p is the vertical distance from the pendulum suspension bar to the rod holder bar,
+    h_p is the vertical distance from the pendulum suspension bar to the lower edge of the rod holder bar,
     w_f is the half-width of the rod holder, h_f is the height of the rod holder,
-    h_j is the height of the top joint holder, l_1 is the half-width of the rack,
+    h_j is the height of the top joint holder, h_b is the height of the rod holder bar,
+    l_1 is the half-width of the rack,
     i.e. the horizontal distance from the right edge of the left bar to the top joint.
     """
-    return (w_p + w_f - l_1), (h_p + h_f - h_j)
+    return (w_p + w_f - l_1), (h_p + h_f + h_b - h_j)
 
 
 def double_pendulum_inv(
@@ -134,8 +147,8 @@ def double_pendulum_angles(
     y = -y  # Read the docs for math.atan2.
     lsr = x**2 + y**2
     char = (lsr - l1**2 - l2**2) / (2 * l1 * l2)
-    alpha = math.acos(-char)
-    beta = math.acos((lsr + l1**2 - l2**2) / (2 * math.sqrt(lsr) * l1))
+    alpha = safe_acos(-char)
+    beta = safe_acos((lsr + l1**2 - l2**2) / (2 * math.sqrt(lsr) * l1))
     theta1 = math.atan2(x, y) - beta if not right else math.atan2(x, y) + beta
     theta2 = math.pi + theta1 - alpha if not right else theta1 + alpha - math.pi
     return theta1 % (2 * math.pi), theta2 % (2 * math.pi)

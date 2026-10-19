@@ -19,7 +19,12 @@ import numpy as np
 # %% [markdown]
 #
 # %%
-from physics_tools.coordinates import double_pendulum_angles, double_pendulum_xy
+from physics_tools.coordinates import (
+    double_pendulum_angles,
+    double_pendulum_conv,
+    double_pendulum_inv,
+    double_pendulum_xy,
+)
 
 dpxy = double_pendulum_xy
 dpc = double_pendulum_angles
@@ -29,4 +34,9 @@ print(dpxy(0, 0))
 print(dpxy(0, np.pi))
 print(dpc(5, 0, right=True))
 dpxy(*dpc(-10, 0, True))
+# %%
+dpa = double_pendulum_conv
+print(np.linalg.norm(dpa(25, -30.5)))
+# %%
+
 # %%
