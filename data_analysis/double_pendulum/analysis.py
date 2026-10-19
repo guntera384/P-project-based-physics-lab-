@@ -36,7 +36,7 @@ print(dpc(5, 0, right=True))
 dpxy(*dpc(-10, 0, True))
 # %%
 dpa = double_pendulum_conv
-print(dpa(25.0, 30.5))
+print(np.linalg.norm(dpa(25, -30.5)))
 # %%
 
 # %%
