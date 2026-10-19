@@ -14,10 +14,10 @@
 # ---
 
 # %%
-import math
-
 import numpy as np
 
+# %% [markdown]
+#
 # %%
 from physics_tools.coordinates import double_pendulum_angles, double_pendulum_xy
 
