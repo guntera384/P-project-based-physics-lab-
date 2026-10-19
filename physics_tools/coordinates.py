@@ -87,6 +87,7 @@ def double_pendulum_conv(
     w_f: float = 1.03,
     h_f: float = 1.1,
     h_j: float = 1.3,
+    h_b: float = 3.0,
     l_1: float = 47.5,
 ):
     """
@@ -97,7 +98,7 @@ def double_pendulum_conv(
     h_j is the height of the top joint holder, l_1 is the half-width of the rack,
     i.e. the horizontal distance from the right edge of the left bar to the top joint.
     """
-    return (w_p + w_f - l_1), (h_p + h_f - h_j)
+    return (w_p + w_f - l_1), (h_p + h_f + h_b - h_j)
 
 
 def double_pendulum_inv(
