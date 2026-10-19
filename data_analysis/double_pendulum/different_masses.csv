@@ -1,0 +1,6 @@
+# TODO: Get time from video
+# mass, position x, position y, time
+heavy, 24.5, -30.4,
+medium, 24.5, -30.4,
+light, 24.5, -30.4, 
+none, 24.5, -30.4,
