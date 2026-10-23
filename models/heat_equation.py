@@ -27,7 +27,6 @@ def freq_fourier(X, Y, Z=[None]):
         kz = np.fft.fftfreq(len(z), dz)
         return kx, ky, kz
 
-
 def fourier_spectral_gradient_2D(X, Y, func_value):
     """
     fucntion currently assumes a 2D array of data points to compute the gradient
@@ -68,13 +67,17 @@ def fourier_spectral_laplacian_2D(X, Y, func_value):
     laplacian = np.fft.ifft2(D2_cf)
     return laplacian
 
-def fourier_spectral_laplacian_3D(X, Y, func_value):
+def fourier_spectral_laplacian_3D(X, Y, Z, func_value):
     """
     compute the laplacian with fourier interpolation
     currently limited to scalar functions
     """
     kx, ky, kz = freq_fourier(X, Y, Z)
-    #implement rest later
+    Kx, Ky, Kz = np.meshgrid(kx, ky, kz, indexing = 'ij')
+    cf = np.fft.fftn(func_value)
+    D3_cf = (2j * pi) ** 2 * (Kx**2 + Ky**2 + Kz**2) * cf
+    laplacian = np.fft.ifftn(D3_cf)
+    return laplacian
 
 def make_square_symmetric(X, Y, U):
     Nx = len(X[0])  # resolution of x direction
@@ -93,7 +96,16 @@ def make_square_symmetric(X, Y, U):
     V = np.concatenate((np.flip(V, axis=1), V), axis=1)
     return X_new, Y_new, V
 
-def propagator_heat_equation(X, Y, U, dt, alpha=1, Neumann=True):
+def make_cube_symmetric(X, Y, Z, U):
+    Nx = len(X[:, 0, 0])
+    Ny = len(Y[0, :, 0])
+    Nz = len(Z[0, 0, :])
+
+    dx = X[1, 0, 1] - X[0, 0, 0]
+    dy = Y[0, 1, 0] - Y[0, 0, 0]
+    dz = Z[0, 0, 1] - Z[0, 0, 0]
+
+def propagator_heat_equation_2D(X, Y, U, dt, alpha=1, Neumann=True):
     """
     input:
         X, Y: real space lattices of the function
@@ -107,6 +119,36 @@ def propagator_heat_equation(X, Y, U, dt, alpha=1, Neumann=True):
     Ny = len(Y[:, 0])
     if Neumann:
         X, Y, U = make_square_symmetric(X, Y, U)
+        cf0 = np.fft.fft2(U)
+        kx, ky = freq_fourier(X, Y)
+        Kx, Ky = np.meshgrid(kx, ky)
+        cf_t = cf0 * np.exp(-alpha * 4 * pi**2 * (Kx**2 + Ky**2) * dt)
+        U_t = np.fft.ifft2(cf_t)
+        return U_t[Nx:, Ny:]
+    if not Neumann:
+        cf0 = np.fft.fft2(U)
+        kx, ky = freq_fourier(X, Y)
+        Kx, Ky = np.meshgrid(kx, ky)
+        cf_t = cf0 * np.exp(-alpha * 4 * pi**2 * (Kx**2 + Ky**2) * dt)
+        U_t = np.fft.ifft2(cf_t)
+        return U_t
+
+def propagator_heat_equation_3D(X, Y, Z, U, dt, alpha=1, Neumann=True):
+    """
+    input:
+        X, Y: real space lattices of the function
+        U: scalar function of X and Y -> U(X, Y)
+        dt: timestep
+        alpha: conduction coefficient (most metals around 1e-5) effects timescale
+        Neumann: if True -> mirror U on x and y plane for neumann conditons (insulated square)
+            if False -> make sure that U does not vary a lot on the boundary -> enlarge square
+    """
+    Nx = len(X[:, 0, 0])
+    Ny = len(Y[0, :, 0])
+    Nz = len(Z[0, 0, :])
+    #not properly implemented yet
+    if Neumann:
+        #X, Y, Z, U = make_cube_symmetric(X, Y, U)
         cf0 = np.fft.fft2(U)
         kx, ky = freq_fourier(X, Y)
         Kx, Ky = np.meshgrid(kx, ky)
@@ -160,10 +202,34 @@ def test_fourier_gradient():
     error_z = np.max(np.abs(Dz_trig - Dz_func))
     print(f"errors in x, y, z = {error_x}, {error_y}, {error_z}")
 
+def test_fourier_spectral_laplacian_3D():
+    x = np.linspace(0, 1, 100, endpoint = False)
+    y = np.linspace(0, 1, 80, endpoint = False)
+    z = np.linspace(0, 1, 60, endpoint = False)
+    X, Y, Z = np.meshgrid(x, y, z, indexing = 'ij')
 
+    test_vals = sin(2*pi*X) * cos(4*pi*Y) * sin(6*pi*Z)
+    laplacian = -56 * pi **2 * test_vals
+    laplacian_trig = np.real(fourier_spectral_laplacian_3D(X, Y, Z, test_vals))
+    err = np.max(np.abs(laplacian - laplacian_trig))
+    print(f"error of laplacian = {err}")
+
+def test_make_symmetric():
+    x = np.linspace(0, 1, 10, endpoint = False)
+    y = np.linspace(0, 0.1, 10, endpoint = False)
+    z = np.linspace(0, 0.01, 10, endpoint = False)
+
+    X, Y, Z = np.meshgrid(x, y, z, indexing = 'ij')
+    U = X + Y + Z
+    #unfinished
+
+def run_tests():
+    test_fourier_gradient()
+    test_fourier_spectral_laplacian_3D()
+    test_make_symmetric()
 
 if __name__ == "__main__":
-    test_fourier_gradient()
+    run_tests()
     """resolution = 11
         x = np.linspace(0, 1, resolution)
         y = np.linspace(0, 1, resolution)
