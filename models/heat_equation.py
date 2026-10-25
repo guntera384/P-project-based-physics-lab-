@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import scipy as sp
 import numpy as np
 from numpy import cos, exp, pi, sin
 
@@ -175,8 +176,8 @@ def test_plot_2D():
     U = np.ones_like(X) * 300
     U[: resolution // 4, : resolution // 4] = 400
 
-    U0 = propagator_heat_equation(X, Y, U, 0, alpha=alpha_copper)
-    U1 = propagator_heat_equation(X, Y, U, 3e2, alpha=alpha_copper, Neumann=True)
+    U0 = propagator_heat_equation_2D(X, Y, U, 0, alpha=alpha_copper)
+    U1 = propagator_heat_equation_2D(X, Y, U, 3e2, alpha=alpha_copper, Neumann=True)
 
     fig, ax = plt.subplots(1, 2, figsize=(10, 4))
     mesh0 = ax[0].pcolormesh(X, Y, np.real(U0))
@@ -228,18 +229,70 @@ def run_tests():
     test_fourier_spectral_laplacian_3D()
     test_make_symmetric()
 
+def make_T_initial(x, lengthscale, T0, delta_T):
+    T = T0 + delta_T * exp(-x/lengthscale)
+    return T
+
+def decay_time_mode_heat_eq(L, n, alpha):
+    #gives the time for any mode to decay from A_0 to A_0 * 1/e
+    return L**2 / ((n * pi)**2 * alpha)
+
+def decay_time_heat_eq(n = 1, timescale = "minutes"):
+    """
+    describes how long the system needs to decay for different configurations
+    n: mode considered for decay time
+    timescale: gives timescale of result -> minutes or seconds
+    """
+    materials = {"copper": 1.16e-4, 
+                 "aluminium": 0.97e-4,
+                 "brass": 0.34e-4,
+                 "iron": 0.23e-4,
+                 "stainless steel": 0.04e-4}
+    
+    lengths = [0.1, 0.2, 0.3]
+    if timescale == "minutes":
+        time_factor = 60
+
+    if timescale == "seconds":
+        time_factor = 1
+
+    for material in materials: 
+        alpha = materials[material]
+        mat = np.zeros(len(lengths))
+        for i,l in enumerate(lengths):
+            mat[i] = decay_time_mode_heat_eq(l, n, alpha) / time_factor
+        print(f"decay times {material}: {mat} in {timescale}")
+
 if __name__ == "__main__":
-    run_tests()
-    """resolution = 11
-        x = np.linspace(0, 1, resolution)
-        y = np.linspace(0, 1, resolution)
-        z = np.linspace(0, 1, resolution)
-        X, Y, Z = np.meshgrid(x, y, z, indexing = 'ij')
-        x_test = X[:, 0, 0]
-        y_test = Y[0, :, 0]
-        z_test = Z[0, 0, :]
-        test_func = sin(2 * pi * X) + np.ones_like(Y) + 3 * cos(4 * pi * Z)
-        Dx, Dy, Dz = np.real(fourier_spectral_gradient_3D(X, Y, Z, test_func))
-        ax = plt.figure().add_subplot(projection='3d')
-        ax.quiver(X, Y, Z, Dx, Dy, Dz, length = 0.1, normalize = True)
-        plt.show()"""
+    decay_time_heat_eq(timescale = "seconds")
+
+    """
+    #shit is not working properly 
+        N = 6 #Number of Data points
+        resolution = 3 #dummy dimension
+        L = 30 #Length of 1D system in cm
+        dx = L/N
+        x = np.array([dx *(n + 0.5) for n in range(N)])
+    
+        y = np.linspace(0, N, N, endpoint=False)
+    
+        X, Y = np.meshgrid(x, y, indexing = 'ij')
+        # U = sin(2 * pi *(X + Y)) + cos(2 * pi * X) #initial state
+        U = np.zeros_like(X)
+        T_0 = make_T_initial(x, lengthscale = 5, T0 = 300, delta_T = 30)
+        U[:] = T_0
+        print(f"U = {U}")
+    
+        alpha_copper = 1.16e-4
+    
+        U0 = propagator_heat_equation_2D(X, Y, U, 0, alpha=alpha_copper)
+        U1 = propagator_heat_equation_2D(X, Y, U, 3e2, alpha=alpha_copper, Neumann=True)
+    
+        fig, ax = plt.subplots(1, 2, figsize=(10, 4))
+        mesh0 = ax[0].pcolormesh(X, Y, np.real(U0))
+        mesh1 = ax[1].pcolormesh(X, Y, np.real(U1))
+        plt.colorbar(mesh0, ax=ax[0])
+        plt.colorbar(mesh1, ax=ax[1])
+        plt.show()
+    """
+    
