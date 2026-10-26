@@ -263,8 +263,60 @@ def decay_time_heat_eq(n = 1, timescale = "minutes"):
             mat[i] = decay_time_mode_heat_eq(l, n, alpha) / time_factor
         print(f"decay times {material}: {mat} in {timescale}")
 
+def stored_heat_rod(l, d, delta_T, Cv = 449, density = 7874):
+    """
+    inputs: 
+        l: length of the rod [m]
+        d: diameter of the rod [m]
+        delta_T: temperature difference considered (T - T_0)
+        Cv: specific heat capacity per weight [J/kg K] assumed constant
+        density: density of material [kg/m^3]
+    output:
+        U: Difference in internal energy [Joules]
+    """
+    V = pi * d**2 / 4 * l
+    M = V * density
+    delta_U = Cv * delta_T * M
+    return delta_U
+
+def power_radiated_rod(l, d, epsilon, T_sys, T_env = 293.15):
+    """
+    assumed constant temperature distribution as a rough upper bound
+    inputs: 
+        l: length of the rod [m]
+        d: diameter of the rod [m]
+        epsilon: emissivity
+        T_sys: Temperature of the system considered (uniform over surface)
+        T_env: Temperature of the surrounding environment (T = 293.15 K by default / roomtemp)
+    out: 
+        P_rad: Power radiated per second [J/s]
+    """
+    A = pi * d * l
+    sigma_B = 5.67e-8
+    P_rad = A * sigma_B * epsilon * (T_sys**4 - T_env**4)
+    return P_rad
+
+def temperature_difference_from_delta_U(l, d, delta_U, Cv = 449, density = 7874):
+    V = pi * d**2 / 4 * l
+    M = V * density
+    delta_T = delta_U /(Cv * M)
+    return delta_T
+
+
 if __name__ == "__main__":
-    decay_time_heat_eq(timescale = "seconds")
+    l = 0.3
+    d = 0.03
+    T_env = 293.15
+    T_sys = 353.15
+    delta_T = T_sys - T_env
+    epsilon = 0.3
+    delta_U = stored_heat_rod(l, d, delta_T)
+    print(f"delta_U = {delta_U}J")
+    P_rad = power_radiated_rod(l, d, epsilon, T_sys, T_env)
+    print(f"Power radiated = {P_rad} [J/s]")
+    delta_U = delta_U - 4 * P_rad * 600
+    T_final = temperature_difference_from_delta_U(l, d, delta_U) + T_env
+    print(f"final temperature = {T_final}")
 
     """
     #shit is not working properly 
