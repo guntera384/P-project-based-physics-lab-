@@ -230,18 +230,25 @@ def run_tests():
     test_make_symmetric()
 
 def make_T_initial(x, lengthscale, T0, delta_T):
+    """
+    simple exponential model used for testing
+    """
     T = T0 + delta_T * exp(-x/lengthscale)
     return T
 
 def decay_time_mode_heat_eq(L, n, alpha):
-    #gives the time for any mode to decay from A_0 to A_0 * 1/e
+    """
+    gives the time for any mode to decay from A_0 to A_0 * 1/e
+    """
     return L**2 / ((n * pi)**2 * alpha)
 
 def decay_time_heat_eq(n = 1, timescale = "minutes"):
     """
     describes how long the system needs to decay for different configurations
-    n: mode considered for decay time
-    timescale: gives timescale of result -> minutes or seconds
+    input: 
+        n: mode considered for decay time
+        timescale: gives timescale of result -> minutes or seconds
+    output: None
     """
     materials = {"copper": 1.16e-4, 
                  "aluminium": 0.97e-4,
@@ -284,6 +291,7 @@ def lossless_propagation_1D(cos_coeffs, t, L = 0.3, alpha = 0.34e-4):
         cos_coeffs: coefficients of starting temperature in cosine basis
         pos_sensor: positions of sensor corresponding to T_initial 
             pos_sensor[0] is location of T_initial[0]
+    output: cos_coeffs_propagated: coefficients propagated in time
     """
     cos_coeffs_propagated = np.zeros_like(cos_coeffs)
     cos_coeffs_propagated[0] = cos_coeffs[0]
@@ -325,6 +333,10 @@ def power_radiated_rod(l, d, epsilon, T_sys, T_env = 293.15):
     return P_rad
 
 def temperature_difference_from_delta_U(l, d, delta_U, Cv = 449, density = 7874):
+    """
+    Overestimate to find the power radiated by a rod. Assumed uniform temperature
+    does not adjust the power radiated as the rod cools and power decreases -> overestimate
+    """
     V = pi * d**2 / 4 * l
     M = V * density
     delta_T = delta_U /(Cv * M)
@@ -351,13 +363,18 @@ def estimates_temperature_loss():
 def get_coeffs_cos_basis(T, x):
     """
     find the coefficients to expand the array T in a cos basis
+    input: 
+        T: Temperature values measured at sensors
+        x: Position of temperature sensors
+    output:
+        coeffs: coefficients of the cosine expansion
     """
     N = len(x)
     L = (x[1] - x[0]) * N
     coeffs = np.zeros_like(T)
     coeffs[0] = 1/N * np.sum(T)
     for n in range(1, N):
-        coeffs[n] = 2/N * np.sum(T * cos(n * pi /L * x))
+        coeffs[n] = 2/N * np.sum(T * cos(n * pi /L * x)) #scalar product to get coeffs
     return coeffs
 
 if __name__ == "__main__":
