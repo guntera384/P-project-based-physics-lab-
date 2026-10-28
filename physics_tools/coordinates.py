@@ -4,6 +4,7 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy import cos, e, exp, pi, sin
+from uncertainties import umath
 
 resolution = [1000, 1000, 1000]  # (x, y, z) axis
 
@@ -82,14 +83,19 @@ def polar_to_cartesian(polar, angle="rad"):
     return np.array([r * cos(theta), r * sin(theta)])
 
 
-def safe_acos(i: float):
-    if abs(i) <= 1:
-        return math.acos(i)
-    elif abs(i) <= 1.1:
-        # raise RuntimeWarning(f"{i} is not in the correct range for acos, rounding.")
-        return math.acos(int(i))
+def safe_acos(i):
+    """
+    acos that tolerates values slightly outside [-1, 1] (rounding).
+    Works with floats and with ufloats (package uncertainties, Gaussian error propagation).
+    """
+    value = getattr(i, "nominal_value", i)
+    if abs(value) < 1:
+        return umath.acos(i)
+    elif abs(value) <= 1.1:
+        # pendulum fully stretched (+1 -> 0) or folded (-1 -> pi)
+        return math.acos(math.copysign(1, value))
     else:
-        raise ValueError(f"{i} too far outside range!")
+        raise ValueError(f"{value} too far outside range!")
 
 
 def double_pendulum_conv(
@@ -118,14 +124,23 @@ def double_pendulum_inv(
     y: float,
     w_f: float = 1.03,
     h_f: float = 1.1,
+    h_b: float = 3.0,
     h_j: float = 1.3,
     l_1: float = 47.5,
 ):
     """
     Inverts double_pendulum_conv, i.e. turns x,y into w_p, h_p
     """
-    return (x - w_f + l_1), (y - h_f + h_j)
+    return (x - w_f + l_1), (y - h_f - h_b + h_j)
 
+def mod_2pi(theta):
+    """
+    theta modulo 2 pi. For ufloats, the nominal value is shifted by a multiple of 2 pi,
+    the uncertainty stays the same.
+    """
+    if hasattr(theta, "nominal_value"):
+        return theta - 2 * math.pi * math.floor(theta.nominal_value / (2 * math.pi))
+    return theta % (2 * math.pi)
 
 def double_pendulum_angles(
     x: float, y: float, right: bool = False, l1: float = 20, l2: float = 15
@@ -138,6 +153,8 @@ def double_pendulum_angles(
     (relative to the line connecting the top joint to the mass),
     l1, l2 the lengths of the corresponding pendulum arms.
     All lengths must be given in cm.
+    x, y, l1, l2 may be floats or ufloats (package uncertainties). With ufloats, the
+    uncertainties are propagated to the angles with Gaussian error propagation.
     Return:
     ang1, ang2 of the top and bottom joint relative to the neutral position (equilibrium).
     Formulae given by derivation (Szymon)
@@ -148,11 +165,10 @@ def double_pendulum_angles(
     lsr = x**2 + y**2
     char = (lsr - l1**2 - l2**2) / (2 * l1 * l2)
     alpha = safe_acos(-char)
-    beta = safe_acos((lsr + l1**2 - l2**2) / (2 * math.sqrt(lsr) * l1))
-    theta1 = math.atan2(x, y) - beta if not right else math.atan2(x, y) + beta
+    beta = safe_acos((lsr + l1**2 - l2**2) / (2 * umath.sqrt(lsr) * l1))
+    theta1 = umath.atan2(x, y) - beta if not right else umath.atan2(x, y) + beta
     theta2 = math.pi + theta1 - alpha if not right else theta1 + alpha - math.pi
-    return theta1 % (2 * math.pi), theta2 % (2 * math.pi)
-
+    return mod_2pi(theta1), mod_2pi(theta2)
 
 def double_pendulum_xy(theta_1: float, theta_2: float, l1: float = 20, l2: float = 15):
     """
