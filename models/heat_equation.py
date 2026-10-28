@@ -263,6 +263,34 @@ def decay_time_heat_eq(n = 1, timescale = "minutes"):
             mat[i] = decay_time_mode_heat_eq(l, n, alpha) / time_factor
         print(f"decay times {material}: {mat} in {timescale}")
 
+def evaluate_point_heat_sum(coeff, t, index, alpha, L): #renaming needed
+    N = len(coeff)
+    delta_x = N/L
+    T = coeff[0]
+    for n in range(1,N):
+        T += exp(- alpha (pi / L)**2 * n **2 *t) * cos(n * (pi/L) * (index + 0.5) * delta_x)
+    return T
+    
+def evaluate_cosine_sum(coeff, x, L):
+    out = 0
+    for n in np.arange(len(coeff)):
+        out += coeff[n] * cos(n * (pi /L) * x)
+    return out
+
+def lossless_propagation_1D(cos_coeffs, t, L = 0.3, alpha = 0.34e-4):
+    """
+    takes initial measurement data and finds the later state assuming no losses
+    input:
+        cos_coeffs: coefficients of starting temperature in cosine basis
+        pos_sensor: positions of sensor corresponding to T_initial 
+            pos_sensor[0] is location of T_initial[0]
+    """
+    cos_coeffs_propagated = np.zeros_like(cos_coeffs)
+    cos_coeffs_propagated[0] = cos_coeffs[0]
+    for i in range(1, len(cos_coeffs)):
+        cos_coeffs_propagated[i] = cos_coeffs[i] * exp(- alpha *(pi * i /L)**2 * t)
+    return cos_coeffs_propagated
+
 def stored_heat_rod(l, d, delta_T, Cv = 449, density = 7874):
     """
     inputs: 
@@ -302,8 +330,10 @@ def temperature_difference_from_delta_U(l, d, delta_U, Cv = 449, density = 7874)
     delta_T = delta_U /(Cv * M)
     return delta_T
 
-
-if __name__ == "__main__":
+def estimates_temperature_loss():
+    """
+    crude model to keep code. Should be adjust later
+    """
     l = 0.3
     d = 0.03
     T_env = 293.15
@@ -318,33 +348,29 @@ if __name__ == "__main__":
     T_final = temperature_difference_from_delta_U(l, d, delta_U) + T_env
     print(f"final temperature = {T_final}")
 
+def get_coeffs_cos_basis(T, x):
     """
-    #shit is not working properly 
-        N = 6 #Number of Data points
-        resolution = 3 #dummy dimension
-        L = 30 #Length of 1D system in cm
-        dx = L/N
-        x = np.array([dx *(n + 0.5) for n in range(N)])
-    
-        y = np.linspace(0, N, N, endpoint=False)
-    
-        X, Y = np.meshgrid(x, y, indexing = 'ij')
-        # U = sin(2 * pi *(X + Y)) + cos(2 * pi * X) #initial state
-        U = np.zeros_like(X)
-        T_0 = make_T_initial(x, lengthscale = 5, T0 = 300, delta_T = 30)
-        U[:] = T_0
-        print(f"U = {U}")
-    
-        alpha_copper = 1.16e-4
-    
-        U0 = propagator_heat_equation_2D(X, Y, U, 0, alpha=alpha_copper)
-        U1 = propagator_heat_equation_2D(X, Y, U, 3e2, alpha=alpha_copper, Neumann=True)
-    
-        fig, ax = plt.subplots(1, 2, figsize=(10, 4))
-        mesh0 = ax[0].pcolormesh(X, Y, np.real(U0))
-        mesh1 = ax[1].pcolormesh(X, Y, np.real(U1))
-        plt.colorbar(mesh0, ax=ax[0])
-        plt.colorbar(mesh1, ax=ax[1])
-        plt.show()
+    find the coefficients to expand the array T in a cos basis
     """
+    N = len(x)
+    L = (x[1] - x[0]) * N
+    coeffs = np.zeros_like(T)
+    coeffs[0] = 1/N * np.sum(T)
+    for n in range(1, N):
+        coeffs[n] = 2/N * np.sum(T * cos(n * pi /L * x))
+    return coeffs
+
+if __name__ == "__main__":
+    N = 6
+    L = 0.3
+    T_initial = np.array([360, 300, 300, 300, 300, 300], dtype = float) #temperature values measured at nodes
+    delta_x = L / N
+    x = delta_x * np.arange(N) + (delta_x/2) #get a vector with the positions implemented
+    coeffs = get_coeffs_cos_basis(T_initial, x)
+    print(coeffs)
+    out = evaluate_cosine_sum(coeffs, x, L)
+    print(out)
+    
+
+
     
