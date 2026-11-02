@@ -16,8 +16,8 @@ dependencies = [
 ]
 
 #[tool.setuptools]
-#packages = ["physics_tools"]
+#packages = ["physics_tools", "models"]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["physics_tools*"]
+include = ["physics_tools*", "models*"]
