@@ -1,0 +1,14 @@
+Measurement series: Series_004
+Started:    2026-11-02 14:03:05
+Stopped:    2026-11-02 14:30:02
+Duration:   0:26:58  (1618.5 s)
+Readings:   249
+Photos:     249 (507 MB)
+Interval:   4 s
+Capture:    Photo - full resolution (slowest)
+Calibrated: 2026-11-02T13:24:56
+Displays:   T1, T2, T3, T4, T5, T6
+
+time_s in the CSV = seconds since Start was pressed, measured at the
+moment each photo was taken. The 'photo' column names the photo in
+photos\ (original) and annotated\ (with the values that were read).
