@@ -1,0 +1,225 @@
+{
+  "config_version": 2,
+  "interval_s": 4.0,
+  "num_displays": 6,
+  "capture": {
+    "method": "adb_photo",
+    "adb_path": "adb",
+    "adb_serial": "",
+    "camera_dir": "/sdcard/DCIM/Camera",
+    "shutter_keycode": 25,
+    "photo_timeout_s": 8,
+    "delete_photos_on_phone": true,
+    "launch_camera_app": true,
+    "keep_screen_on": true,
+    "webcam_index": 0,
+    "webcam_width": 1920,
+    "webcam_height": 1080,
+    "http_url": "http://127.0.0.1:8080/shot.jpg",
+    "adb_forward_port": 8080,
+    "folder_path": ""
+  },
+  "output_dir": "output",
+  "measurements_dir": "measurements",
+  "csv_delimiter": ",",
+  "accept_uncertain": false,
+  "retry_unreadable": false,
+  "save_photos": true,
+  "save_annotated_photos": true,
+  "photo_max_width": 0,
+  "min_free_disk_mb": 500,
+  "preview_when_not_recording": true,
+  "displays": [
+    {
+      "name": "T1",
+      "valid_range": null,
+      "max_jump": null,
+      "quad": [
+        [
+          665.8837606837607,
+          1347.51452991453
+        ],
+        [
+          1013.4119658119657,
+          1355.5965811965812
+        ],
+        [
+          983.7777777777778,
+          1567.7504273504273
+        ],
+        [
+          634.9025641025642,
+          1560.3418803418804
+        ]
+      ],
+      "polarity": "dark",
+      "channel": "gray",
+      "slant": 0.0,
+      "band_top": 0.02,
+      "band_bottom": 1.02,
+      "digit_width": 0.41,
+      "stroke": 0.12,
+      "pitch": 0.6
+    },
+    {
+      "name": "T2",
+      "valid_range": null,
+      "max_jump": null,
+      "quad": [
+        [
+          1513.7692307692307,
+          1367.7692307692307
+        ],
+        [
+          1867.6153846153848,
+          1373.923076923077
+        ],
+        [
+          1842.3846153846152,
+          1591.1538461538462
+        ],
+        [
+          1485.4615384615386,
+          1583.1538461538462
+        ]
+      ],
+      "polarity": "dark",
+      "channel": "gray",
+      "slant": 0.0,
+      "band_top": 0.02,
+      "band_bottom": 1.01,
+      "digit_width": 0.41,
+      "stroke": 0.12,
+      "pitch": 0.59
+    },
+    {
+      "name": "T3",
+      "valid_range": null,
+      "max_jump": null,
+      "quad": [
+        [
+          2466.1384615384613,
+          1162.6615384615384
+        ],
+        [
+          2786.2615384615383,
+          1173.6461538461538
+        ],
+        [
+          2771.0923076923077,
+          1330.0461538461539
+        ],
+        [
+          2451.492307692308,
+          1321.676923076923
+        ]
+      ],
+      "polarity": "dark",
+      "channel": "gray",
+      "slant": 0.0,
+      "band_top": 0.02,
+      "band_bottom": 1.0,
+      "digit_width": 0.495,
+      "stroke": 0.12,
+      "pitch": 0.75
+    },
+    {
+      "name": "T4",
+      "valid_range": null,
+      "max_jump": null,
+      "quad": [
+        [
+          2405.8358974358976,
+          1373.8615384615384
+        ],
+        [
+          2606.825641025641,
+          1380.9692307692308
+        ],
+        [
+          2596.9538461538464,
+          1486.4
+        ],
+        [
+          2395.174358974359,
+          1478.897435897436
+        ]
+      ],
+      "polarity": "dark",
+      "channel": "gray",
+      "slant": 0.0,
+      "band_top": 0.02,
+      "band_bottom": 1.0,
+      "digit_width": 0.49,
+      "stroke": 0.12,
+      "pitch": 0.695
+    },
+    {
+      "name": "T5",
+      "valid_range": null,
+      "max_jump": null,
+      "quad": [
+        [
+          3373.8017094017096,
+          1178.22905982906
+        ],
+        [
+          3701.042735042735,
+          1189.548717948718
+        ],
+        [
+          3685.6068376068374,
+          1349.0529914529914
+        ],
+        [
+          3360.9384615384615,
+          1337.7333333333333
+        ]
+      ],
+      "polarity": "dark",
+      "channel": "gray",
+      "slant": 0.0,
+      "band_top": 0.02,
+      "band_bottom": 1.0,
+      "digit_width": 0.51,
+      "stroke": 0.12,
+      "pitch": 0.755
+    },
+    {
+      "name": "T6",
+      "valid_range": null,
+      "max_jump": null,
+      "quad": [
+        [
+          3313.4188034188032,
+          1390.5726495726497
+        ],
+        [
+          3520.8888888888887,
+          1401.8974358974358
+        ],
+        [
+          3510.4700854700855,
+          1505.6324786324785
+        ],
+        [
+          3301.188034188034,
+          1497.931623931624
+        ]
+      ],
+      "polarity": "dark",
+      "channel": "gray",
+      "slant": 0.0,
+      "band_top": 0.02,
+      "band_bottom": 1.0,
+      "digit_width": 0.54,
+      "stroke": 0.13,
+      "pitch": 0.715
+    }
+  ],
+  "calibration_image_size": [
+    4032,
+    2268
+  ],
+  "calibrated_at": "2026-11-02T10:54:16"
+}
