@@ -1,0 +1,245 @@
+{
+  "config_version": 3,
+  "interval_s": 4.0,
+  "num_displays": 6,
+  "capture": {
+    "method": "adb_photo",
+    "adb_path": "adb",
+    "adb_serial": "",
+    "camera_dir": "/sdcard/DCIM/Camera",
+    "shutter_keycode": 25,
+    "photo_timeout_s": 8,
+    "delete_photos_on_phone": true,
+    "launch_camera_app": true,
+    "keep_screen_on": true,
+    "webcam_index": 0,
+    "webcam_width": 1920,
+    "webcam_height": 1080,
+    "http_url": "http://127.0.0.1:8080/shot.jpg",
+    "adb_forward_port": 8080,
+    "folder_path": "",
+    "adb_persistent_shell": true,
+    "screen_raw": true
+  },
+  "output_dir": "output",
+  "measurements_dir": "measurements",
+  "csv_delimiter": ",",
+  "accept_uncertain": false,
+  "retry_unreadable": false,
+  "save_photos": true,
+  "save_annotated_photos": true,
+  "photo_max_width": 0,
+  "min_free_disk_mb": 500,
+  "preview_when_not_recording": true,
+  "displays": [
+    {
+      "name": "T1",
+      "valid_range": null,
+      "max_jump": null
+    },
+    {
+      "name": "T2",
+      "valid_range": null,
+      "max_jump": null
+    },
+    {
+      "name": "T3",
+      "valid_range": null,
+      "max_jump": null
+    },
+    {
+      "name": "T4",
+      "valid_range": null,
+      "max_jump": null
+    },
+    {
+      "name": "T5",
+      "valid_range": null,
+      "max_jump": null
+    },
+    {
+      "name": "T6",
+      "valid_range": null,
+      "max_jump": null
+    }
+  ],
+  "calibrations": {
+    "adb_photo": {
+      "image_size": [
+        4032,
+        2268
+      ],
+      "calibrated_at": "2026-11-02T13:24:56",
+      "displays": [
+        {
+          "quad": [
+            [
+              678.7692307692307,
+              1387.1538461538462
+            ],
+            [
+              1030.6923076923076,
+              1389.7179487179487
+            ],
+            [
+              1017.2307692307693,
+              1603.8205128205127
+            ],
+            [
+              653.1282051282051,
+              1601.897435897436
+            ]
+          ],
+          "polarity": "dark",
+          "channel": "r",
+          "slant": 0.0,
+          "band_top": 0.02,
+          "band_bottom": 1.01,
+          "digit_width": 0.48,
+          "stroke": 0.12,
+          "pitch": 0.6
+        },
+        {
+          "quad": [
+            [
+              1524.4615384615386,
+              1399.6410256410256
+            ],
+            [
+              1885.8461538461538,
+              1417.4871794871794
+            ],
+            [
+              1851.6410256410256,
+              1631.6410256410256
+            ],
+            [
+              1488.7692307692307,
+              1612.3076923076924
+            ]
+          ],
+          "polarity": "dark",
+          "channel": "gray",
+          "slant": 0.0,
+          "band_top": 0.02,
+          "band_bottom": 1.02,
+          "digit_width": 0.46,
+          "stroke": 0.12,
+          "pitch": 0.6
+        },
+        {
+          "quad": [
+            [
+              2466.0,
+              1199.0
+            ],
+            [
+              2790.4444444444443,
+              1212.3333333333333
+            ],
+            [
+              2776.0,
+              1370.6666666666667
+            ],
+            [
+              2450.4444444444443,
+              1357.888888888889
+            ]
+          ],
+          "polarity": "dark",
+          "channel": "gray",
+          "slant": 0.0,
+          "band_top": 0.02,
+          "band_bottom": 1.01,
+          "digit_width": 0.55,
+          "stroke": 0.12,
+          "pitch": 0.74
+        },
+        {
+          "quad": [
+            [
+              2409.0273504273505,
+              1409.6752136752136
+            ],
+            [
+              2610.0666666666666,
+              1418.3264957264958
+            ],
+            [
+              2599.7675213675216,
+              1524.2017094017094
+            ],
+            [
+              2393.3726495726496,
+              1515.5504273504273
+            ]
+          ],
+          "polarity": "dark",
+          "channel": "gray",
+          "slant": 0.0,
+          "band_top": 0.02,
+          "band_bottom": 1.01,
+          "digit_width": 0.5,
+          "stroke": 0.12,
+          "pitch": 0.695
+        },
+        {
+          "quad": [
+            [
+              3370.1384615384613,
+              1218.1384615384616
+            ],
+            [
+              3705.953846153846,
+              1233.502564102564
+            ],
+            [
+              3691.1384615384613,
+              1393.179487179487
+            ],
+            [
+              3353.128205128205,
+              1376.7179487179487
+            ]
+          ],
+          "polarity": "dark",
+          "channel": "gray",
+          "slant": 0.0,
+          "band_top": 0.02,
+          "band_bottom": 1.0,
+          "digit_width": 0.56,
+          "stroke": 0.12,
+          "pitch": 0.76
+        },
+        {
+          "quad": [
+            [
+              3309.008547008547,
+              1430.6581196581196
+            ],
+            [
+              3520.709401709402,
+              1441.5042735042734
+            ],
+            [
+              3511.871794871795,
+              1546.3504273504273
+            ],
+            [
+              3299.3675213675215,
+              1535.102564102564
+            ]
+          ],
+          "polarity": "dark",
+          "channel": "gray",
+          "slant": 0.03,
+          "band_top": 0.01,
+          "band_bottom": 1.01,
+          "digit_width": 0.58,
+          "stroke": 0.13,
+          "pitch": 0.725
+        }
+      ]
+    }
+  }
+}
