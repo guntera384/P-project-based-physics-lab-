@@ -19,7 +19,7 @@ reading,time_s,T1,T2,T3,T4,T5,T6,photo,notes
 18,94.0,45.4,39.3,32.5,29.2,25.8,24.8,00018_94.0s.jpg,
 19,99.5,45.0,39.2,32.5,29.3,25.8,24.9,00019_99.5s.jpg,
 20,104.5,44.6,39.1,32.6,29.5,25.9,25.0,00020_104.5s.jpg,
-21,109.7,44.4,,32.7,29.6,26.1,25.1,00021_109.7s.jpg,T2: '38.9' uncertain (faint/ambiguous segment in '9')
+21,109.7,44.4,38.9,32.7,29.6,26.1,25.1,00021_109.7s.jpg,T2: '38.9' uncertain (faint/ambiguous segment in '9')
 22,115.6,43.9,38.8,32.7,29.7,26.2,25.2,00022_115.6s.jpg,
 23,121.1,43.6,38.7,32.7,29.8,26.3,25.3,00023_121.1s.jpg,
 24,126.8,43.3,38.6,32.8,29.9,26.5,25.4,00024_126.8s.jpg,
@@ -34,7 +34,7 @@ reading,time_s,T1,T2,T3,T4,T5,T6,photo,notes
 33,176.7,40.9,37.6,33.0,30.6,27.4,26.2,00033_176.7s.jpg,
 34,182.6,40.7,37.5,33.0,30.6,27.6,26.4,00034_182.6s.jpg,
 35,188.1,40.5,37.3,33.0,30.7,27.7,26.5,00035_188.1s.jpg,
-36,194.4,40.3,,33.0,30.7,27.8,26.6,00036_194.4s.jpg,T2: '37.2' uncertain (faint/ambiguous segment in '2')
+36,194.4,40.3,37.2,33.0,30.7,27.8,26.6,00036_194.4s.jpg,T2: '37.2' uncertain (faint/ambiguous segment in '2')
 37,200.4,40.0,37.1,33.0,30.9,27.9,26.7,00037_200.4s.jpg,
 38,206.5,39.9,37.0,33.0,30.8,27.9,26.8,00038_206.5s.jpg,
 39,212.1,39.7,37.0,33.0,30.9,28.0,27.0,00039_212.1s.jpg,
@@ -44,9 +44,9 @@ reading,time_s,T1,T2,T3,T4,T5,T6,photo,notes
 43,235.0,39.0,36.5,33.0,31.0,28.4,27.3,00043_235.0s.jpg,
 44,240.7,38.8,36.4,32.9,31.0,28.5,27.4,00044_240.7s.jpg,
 45,246.3,38.7,36.3,32.9,31.0,28.6,27.5,00045_246.3s.jpg,
-46,252.3,38.5,,32.9,31.0,28.7,27.7,00046_252.3s.jpg,T2: '36.2' uncertain (more than one decimal point)
-47,258.7,38.3,,32.9,31.1,28.7,27.8,00047_258.7s.jpg,T2: '36.1' uncertain (more than one decimal point)
-48,266.1,38.1,,32.9,31.1,28.9,27.9,00048_266.1s.jpg,T2: '36.0' uncertain (more than one decimal point)
+46,252.3,38.5,36.2,32.9,31.0,28.7,27.7,00046_252.3s.jpg,T2: '36.2' uncertain (more than one decimal point)
+47,258.7,38.3,36.1,32.9,31.1,28.7,27.8,00047_258.7s.jpg,T2: '36.1' uncertain (more than one decimal point)
+48,266.1,38.1,36.0,32.9,31.1,28.9,27.9,00048_266.1s.jpg,T2: '36.0' uncertain (more than one decimal point)
 49,272.0,38.0,36.0,32.9,31.2,28.9,28.0,00049_272.0s.jpg,
 50,277.4,37.9,35.9,32.9,31.1,29.0,28.0,00050_277.4s.jpg,
 51,283.3,37.7,35.8,32.9,31.1,29.0,28.1,00051_283.3s.jpg,
@@ -71,7 +71,7 @@ reading,time_s,T1,T2,T3,T4,T5,T6,photo,notes
 70,402.2,35.6,34.4,32.6,31.5,30.2,29.6,00070_402.2s.jpg,
 71,409.0,35.5,34.4,32.6,31.5,30.3,29.7,00071_409.0s.jpg,
 72,416.3,35.4,34.3,32.6,31.5,30.3,29.8,00072_416.3s.jpg,
-73,423.6,35.3,34.2,,,30.4,29.9,00073_423.6s.jpg,T3: '32.5' uncertain (faint/ambiguous segment in '5'); T4: '31.5' uncertain (faint/ambiguous segment in '5')
+73,423.6,35.3,34.2,32.5,31.5,30.4,29.9,00073_423.6s.jpg,T3: '32.5' uncertain (faint/ambiguous segment in '5'); T4: '31.5' uncertain (faint/ambiguous segment in '5')
 74,430.4,35.3,34.2,32.5,31.5,30.4,29.9,00074_430.4s.jpg,
 75,438.9,35.1,34.1,32.5,31.5,30.5,30.0,00075_438.9s.jpg,
 76,446.5,35.1,34.1,32.5,31.6,30.5,30.0,00076_446.5s.jpg,
@@ -83,22 +83,22 @@ reading,time_s,T1,T2,T3,T4,T5,T6,photo,notes
 82,491.2,34.6,33.7,32.4,31.6,30.8,30.4,00082_491.2s.jpg,
 83,499.2,34.5,33.7,32.3,31.6,30.8,30.4,00083_499.2s.jpg,
 84,506.9,34.4,33.6,32.3,31.6,30.8,30.5,00084_506.9s.jpg,
-85,515.2,34.3,,32.3,31.6,30.8,30.6,00085_515.2s.jpg,T2: '33.6' uncertain (more than one decimal point)
-86,521.0,34.3,,32.3,31.6,30.9,30.6,00086_521.0s.jpg,T2: '33.5' uncertain (more than one decimal point)
+85,515.2,34.3,33.6,32.3,31.6,30.8,30.6,00085_515.2s.jpg,T2: '33.6' uncertain (more than one decimal point)
+86,521.0,34.3,33.5,32.3,31.6,30.9,30.6,00086_521.0s.jpg,T2: '33.5' uncertain (more than one decimal point)
 87,528.3,34.2,33.5,32.3,31.6,30.9,30.6,00087_528.3s.jpg,
 88,536.0,34.1,33.4,32.3,31.7,30.9,30.7,00088_536.0s.jpg,
-89,543.1,34.1,,32.3,31.6,31.0,30.7,00089_543.1s.jpg,T2: '33.4' uncertain (more than one decimal point)
+89,543.1,34.1,33.4,32.3,31.6,31.0,30.7,00089_543.1s.jpg,T2: '33.4' uncertain (more than one decimal point)
 90,550.1,34.0,33.3,32.3,31.6,31.0,30.7,00090_550.1s.jpg,
 91,556.9,34.0,33.3,32.2,31.6,31.0,30.8,00091_556.9s.jpg,
 92,564.6,33.9,33.2,32.2,31.7,31.0,30.8,00092_564.6s.jpg,
-93,571.9,33.8,,32.2,31.6,31.1,30.9,00093_571.9s.jpg,T2: '33.2' uncertain (more than one decimal point)
+93,571.9,33.8,33.2,32.2,31.6,31.1,30.9,00093_571.9s.jpg,T2: '33.2' uncertain (more than one decimal point)
 94,579.2,33.8,33.2,32.2,31.6,31.1,30.9,00094_579.2s.jpg,
 95,586.9,33.7,33.1,32.2,31.6,31.1,30.9,00095_586.9s.jpg,
 96,593.8,33.7,33.1,32.1,31.6,31.1,31.0,00096_593.8s.jpg,
-97,600.0,33.6,,32.1,31.6,31.1,31.0,00097_600.0s.jpg,T2: '33.0' uncertain (more than one decimal point)
-98,606.3,33.6,,32.1,31.7,31.2,31.0,00098_606.3s.jpg,T2: '33.0' uncertain (more than one decimal point)
-99,613.8,33.6,,32.1,31.6,31.2,31.0,00099_613.8s.jpg,T2: '33.0' uncertain (more than one decimal point)
-100,621.0,33.5,,32.1,31.7,31.2,31.1,00100_621.0s.jpg,T2: '33.0' uncertain (more than one decimal point)
+97,600.0,33.6,33.0,32.1,31.6,31.1,31.0,00097_600.0s.jpg,T2: '33.0' uncertain (more than one decimal point)
+98,606.3,33.6,33.0,32.1,31.7,31.2,31.0,00098_606.3s.jpg,T2: '33.0' uncertain (more than one decimal point)
+99,613.8,33.6,33.0,32.1,31.6,31.2,31.0,00099_613.8s.jpg,T2: '33.0' uncertain (more than one decimal point)
+100,621.0,33.5,33.0,32.1,31.7,31.2,31.1,00100_621.0s.jpg,T2: '33.0' uncertain (more than one decimal point)
 101,628.4,33.4,32.9,32.1,31.6,31.3,31.1,00101_628.4s.jpg,
 102,635.9,33.4,32.9,32.1,31.6,31.3,31.1,00102_635.9s.jpg,
 103,643.1,33.4,32.9,32.0,31.6,31.3,31.2,00103_643.1s.jpg,
@@ -138,29 +138,29 @@ reading,time_s,T1,T2,T3,T4,T5,T6,photo,notes
 137,880.6,32.3,32.1,31.7,31.5,31.7,31.7,00137_880.6s.jpg,
 138,887.1,32.3,32.1,31.7,31.5,31.7,31.7,00138_887.1s.jpg,
 139,893.8,32.3,32.1,31.7,31.5,31.7,31.8,00139_893.8s.jpg,
-140,901.7,32.3,,31.7,31.5,31.7,31.8,00140_901.7s.jpg,T2: '32.0' uncertain (more than one decimal point)
+140,901.7,32.3,32.0,31.7,31.5,31.7,31.8,00140_901.7s.jpg,T2: '32.0' uncertain (more than one decimal point)
 141,907.8,32.3,32.1,31.7,31.5,31.7,31.8,00141_907.8s.jpg,
 142,914.1,32.2,32.0,31.7,31.5,31.7,31.8,00142_914.1s.jpg,
 143,922.2,32.2,32.0,31.7,31.5,31.7,31.8,00143_922.2s.jpg,
 144,928.8,32.2,32.0,31.7,31.5,31.7,31.8,00144_928.8s.jpg,
 145,937.0,32.2,32.0,31.6,31.5,31.7,31.8,00145_937.0s.jpg,
-146,943.3,32.1,,31.7,31.4,31.7,31.8,00146_943.3s.jpg,T2: '31.9' uncertain (more than one decimal point)
-147,951.1,32.1,,31.6,31.4,31.7,31.8,00147_951.1s.jpg,T2: '31.9' uncertain (more than one decimal point)
-148,957.4,32.1,,31.6,31.4,31.7,31.8,00148_957.4s.jpg,T2: '31.9' uncertain (more than one decimal point)
-149,963.7,32.1,,31.6,31.4,31.8,31.8,00149_963.7s.jpg,T2: '31.9' uncertain (more than one decimal point)
-150,971.3,32.0,,31.5,31.4,31.7,31.8,00150_971.3s.jpg,T2: '31.9' uncertain (more than one decimal point)
-151,979.1,32.0,,31.6,31.4,31.7,31.8,00151_979.1s.jpg,T2: '31.9' uncertain (more than one decimal point)
-152,986.8,32.0,,31.5,31.4,31.7,31.8,00152_986.8s.jpg,T2: '31.9' uncertain (more than one decimal point)
-153,993.1,32.0,,31.5,31.4,31.7,31.8,00153_993.1s.jpg,T2: '31.9' uncertain (more than one decimal point)
-154,999.0,32.0,,31.6,31.4,31.7,31.8,00154_999.0s.jpg,T2: '31.9' uncertain (more than one decimal point)
-155,1005.5,32.0,,31.6,31.4,31.7,31.8,00155_1005.5s.jpg,T2: '31.8' uncertain (more than one decimal point)
-156,1013.2,31.9,,31.5,31.4,31.8,31.8,00156_1013.2s.jpg,T2: '31.8' uncertain (more than one decimal point)
-157,1021.1,31.9,,31.5,31.4,31.7,31.8,00157_1021.1s.jpg,T2: '31.8' uncertain (more than one decimal point)
-158,1028.4,31.9,,31.5,31.4,31.7,31.8,00158_1028.4s.jpg,T2: '31.8' uncertain (more than one decimal point)
-159,1036.0,31.9,,31.5,31.4,31.7,31.8,00159_1036.0s.jpg,T2: '31.8' uncertain (more than one decimal point)
-160,1041.7,31.9,,31.5,31.4,31.8,31.8,00160_1041.7s.jpg,T2: '31.8' uncertain (more than one decimal point)
-161,1048.9,31.9,,31.5,31.4,31.7,31.8,00161_1048.9s.jpg,T2: '31.8' uncertain (more than one decimal point)
-162,1055.1,31.9,,31.5,31.4,31.7,31.8,00162_1055.1s.jpg,T2: '31.7' uncertain (more than one decimal point)
-163,1061.2,31.9,,31.5,31.4,31.7,31.9,00163_1061.2s.jpg,T2: '31.7' uncertain (more than one decimal point)
-164,1067.9,31.8,,31.4,31.4,31.7,31.8,00164_1067.9s.jpg,T2: '31.7' uncertain (more than one decimal point)
-165,1075.3,31.8,,31.5,31.4,31.7,31.8,00165_1075.3s.jpg,T2: '31.7' uncertain (more than one decimal point)
+146,943.3,32.1,31.9,31.7,31.4,31.7,31.8,00146_943.3s.jpg,T2: '31.9' uncertain (more than one decimal point)
+147,951.1,32.1,31.9,31.6,31.4,31.7,31.8,00147_951.1s.jpg,T2: '31.9' uncertain (more than one decimal point)
+148,957.4,32.1,31.9,31.6,31.4,31.7,31.8,00148_957.4s.jpg,T2: '31.9' uncertain (more than one decimal point)
+149,963.7,32.1,31.9,31.6,31.4,31.8,31.8,00149_963.7s.jpg,T2: '31.9' uncertain (more than one decimal point)
+150,971.3,32.0,31.9,31.5,31.4,31.7,31.8,00150_971.3s.jpg,T2: '31.9' uncertain (more than one decimal point)
+151,979.1,32.0,31.9,31.6,31.4,31.7,31.8,00151_979.1s.jpg,T2: '31.9' uncertain (more than one decimal point)
+152,986.8,32.0,31.9,31.5,31.4,31.7,31.8,00152_986.8s.jpg,T2: '31.9' uncertain (more than one decimal point)
+153,993.1,32.0,31.9,31.5,31.4,31.7,31.8,00153_993.1s.jpg,T2: '31.9' uncertain (more than one decimal point)
+154,999.0,32.0,31.9,31.6,31.4,31.7,31.8,00154_999.0s.jpg,T2: '31.9' uncertain (more than one decimal point)
+155,1005.5,32.0,31.8,31.6,31.4,31.7,31.8,00155_1005.5s.jpg,T2: '31.8' uncertain (more than one decimal point)
+156,1013.2,31.9,31.8,31.5,31.4,31.8,31.8,00156_1013.2s.jpg,T2: '31.8' uncertain (more than one decimal point)
+157,1021.1,31.9,31.8,31.5,31.4,31.7,31.8,00157_1021.1s.jpg,T2: '31.8' uncertain (more than one decimal point)
+158,1028.4,31.9,31.8,31.5,31.4,31.7,31.8,00158_1028.4s.jpg,T2: '31.8' uncertain (more than one decimal point)
+159,1036.0,31.9,31.8,31.5,31.4,31.7,31.8,00159_1036.0s.jpg,T2: '31.8' uncertain (more than one decimal point)
+160,1041.7,31.9,31.8,31.5,31.4,31.8,31.8,00160_1041.7s.jpg,T2: '31.8' uncertain (more than one decimal point)
+161,1048.9,31.9,31.8,31.5,31.4,31.7,31.8,00161_1048.9s.jpg,T2: '31.8' uncertain (more than one decimal point)
+162,1055.1,31.9,31.7,31.5,31.4,31.7,31.8,00162_1055.1s.jpg,T2: '31.7' uncertain (more than one decimal point)
+163,1061.2,31.9,31.7,31.5,31.4,31.7,31.9,00163_1061.2s.jpg,T2: '31.7' uncertain (more than one decimal point)
+164,1067.9,31.8,31.7,31.4,31.4,31.7,31.8,00164_1067.9s.jpg,T2: '31.7' uncertain (more than one decimal point)
+165,1075.3,31.8,31.7,31.5,31.4,31.7,31.8,00165_1075.3s.jpg,T2: '31.7' uncertain (more than one decimal point)
