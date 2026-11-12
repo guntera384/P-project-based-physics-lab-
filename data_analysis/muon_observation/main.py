@@ -104,8 +104,3 @@ def read_all(folder: str):
     TODO
     Reads all files. Obtains distance, etc.
     """
-
-
-# %%
-
-# %%
