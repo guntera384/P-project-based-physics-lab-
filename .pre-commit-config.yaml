@@ -1,7 +1,6 @@
 repos:
   - repo: https://github.com/mwouts/jupytext
-    rev: v1.16.4   # use the latest tag
+    rev: v1.19.6   # use the latest tag
     hooks:
       - id: jupytext
         args: [--sync]
-        files: ^data_analysis/pendulum/(analysis|plotting)\.(ipynb|py)$
