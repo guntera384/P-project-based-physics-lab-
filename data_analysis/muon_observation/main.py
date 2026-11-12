@@ -15,8 +15,8 @@
 
 # %%
 import numpy as np
-import scipy
 import pandas as pd
+import scipy
 
 # %%
 """
@@ -47,6 +47,7 @@ def area_integral(n: float = 2.0, theta: float = 0, distance: float = PLANE_DIST
     The count rate for two points in a line: Consider an area dA1 on the lower plane at x1, and an area dA2 on the upper plane at x2. Then a line from the atmosphere through both areas sees the lower area as d/r dA1; dA2 as seen from x1 subtends the solid angle (d/r) dA2 / r^2. Thus, we need to scale cos^n by d**2/r**4.
 
     The area arguments only depend on the relative offsets, so we can simply double-integrate over the x- and y-offsets.
+    TODO change to Gauss-Legendre quadrature. https://stackoverflow.com/questions/77002315/get-2d-gauss-legendre-quadrature-points-and-weights-using-numpy .
     """
     a = SIDE_LENGTH
     d = distance
@@ -63,7 +64,7 @@ def area_integral(n: float = 2.0, theta: float = 0, distance: float = PLANE_DIST
 
 
 # %%
-WINDOW = 30e-6 # 30 us
+WINDOW = 30e-6  # 30 us
 
 
 def accidental_rate(singles_rate=0.5, window=WINDOW):
@@ -87,6 +88,23 @@ def count_rate(
     """
     return timespan * (intensity * area_integral(n, theta, distance) + accidentals)
 
+
 # %%
-def io(filename: str):
-    
+def read_one(filename: str):
+    """
+    TODO once I have a sample file.
+    Reads a single filename. Obtains angle theta and count.
+    """
+    data = pd.read_csv(filename)
+
+
+def read_all(folder: str):
+    """
+    TODO
+    Reads all files. Obtains distance, etc.
+    """
+
+
+# %%
+
+# %%
