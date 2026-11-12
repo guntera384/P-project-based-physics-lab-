@@ -1,42 +1,35 @@
 # ---
 # jupyter:
 #   jupytext:
+#     cell_metadata_filter: -jupyter
 #     formats: ipynb,py:percent
+#     notebook_metadata_filter: -jupytext.text_representation.jupytext_version
 #     text_representation:
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.6
 #   kernelspec:
-#     display_name: Python (pendulum-env)
+#     display_name: Python 3
 #     language: python
-#     name: pendulum-env
+#     name: python3
 # ---
 
 # %%
+import math
+
 import numpy as np
 
 # %% [markdown]
 #
 # %%
-from physics_tools.coordinates import (
-    double_pendulum_angles,
-    double_pendulum_conv,
-    double_pendulum_inv,
-    double_pendulum_xy,
-)
+from physics_tools.coordinates import double_pendulum_angles, double_pendulum_xy
 
 dpxy = double_pendulum_xy
 dpc = double_pendulum_angles
 
 # %%
+print(norm(array(dpxy(radians(80), radians(80)))))
 print(dpxy(0, 0))
 print(dpxy(0, np.pi))
 print(dpc(5, 0, right=True))
 dpxy(*dpc(-10, 0, True))
-# %%
-dpa = double_pendulum_conv
-print(np.linalg.norm(dpa(25, -30.5)))
-# %%
-
-# %%

@@ -1,6 +1,7 @@
 # ---
 # jupyter:
 #   jupytext:
+#     cell_metadata_filter: -jupyter
 #     formats: ipynb,py:hydrogen
 #     notebook_metadata_filter: -jupytext.text_representation.jupytext_version
 #     text_representation:
