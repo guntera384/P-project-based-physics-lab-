@@ -2,11 +2,11 @@
 # jupyter:
 #   jupytext:
 #     formats: ipynb,py:hydrogen
+#     notebook_metadata_filter: -jupytext.text_representation.jupytext_version
 #     text_representation:
 #       extension: .py
 #       format_name: hydrogen
 #       format_version: '1.3'
-#       jupytext_version: 1.16.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -16,6 +16,7 @@
 # %%
 import numpy as np
 import scipy
+import pandas as pd
 
 # %%
 """
@@ -62,10 +63,10 @@ def area_integral(n: float = 2.0, theta: float = 0, distance: float = PLANE_DIST
 
 
 # %%
-WINDOW = 30e-6
+WINDOW = 30e-6 # 30 us
 
 
-def accidental_rate(singles_rate=1, window=WINDOW):
+def accidental_rate(singles_rate=0.5, window=WINDOW):
     """
     Returns the rate of accidentals from both detectors as given in the source.
     """
@@ -78,13 +79,14 @@ def count_rate(
     intensity: float = 1,
     accidentals: float = 0.1,
     timespan: float = 100,
+    theta: float = 0,
+    distance: float = 0,
 ):
     """
     Returns the expected count rate for an exponent {n}, maximal {intensity} and {accidental} rate over a given {timespan}, when measuring over {theta} with {distance} between planes.
     """
     return timespan * (intensity * area_integral(n, theta, distance) + accidentals)
 
-
 # %%
-def test():
-    pass
+def io(filename: str):
+    

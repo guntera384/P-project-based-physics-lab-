@@ -1,0 +1,4 @@
+# Don't record which jupytext version wrote a file (avoids diff noise)
+notebook_metadata_filter = "-jupytext.text_representation.jupytext_version"
+# Pair every notebook in this repo with a hydrogen-style .py
+formats = "ipynb,py:hydrogen"
