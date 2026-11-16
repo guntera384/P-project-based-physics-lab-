@@ -33,7 +33,9 @@ SHOPPING LIST:
 
 """
 SPECIFICATIONS:
-Our units MUST be seconds and cm. Every variable must give units as such.
+Our length units MUST be cm. Every variable must give units as such.
+Our time units may vary and MUST be specified in the docstring. This is to prevent floating-point annihilation issues.
+TODO: Specify time units in all functions
 """
 
 # %%
@@ -61,31 +63,37 @@ def area_integral(n: float = 2.0, theta: float = 0, distance: float = PLANE_DIST
             * np.cos(theta) ** n
         )
 
-    return scipy.integrate.dblquad(integrand, -a, a, -a, a)
+    return scipy.integrate.dblquad(integrand, -a, a, -a, a)[0]
 
 
 # %%
-WINDOW = 30e-6  # 30 us
+WINDOW = 30e-3  # 30 us = 0.03 ms = 30e-6 s
 
 
 def accidental_rate(singles_rate=0.5, window=WINDOW):
     """
     Returns the rate of accidentals from both detectors as given in the source.
+    singles_rate must have the same unit as WINDOW.
+    Returns units of WINDOW^{-1}
     """
     return 2 * singles_rate**2 * window
 
 
 # %%
+ACCIDENTALS = 0.1
+INTENSITY = 170  # Per HOUR
+
+
 def count_rate(
-    n: float = 2.0,
-    intensity: float = 1,
-    accidentals: float = 0.1,
-    timespan: float = 100,
+    n: float = 2,
+    intensity: float = 170,  # In units of HOUR^-1
+    accidentals: float = ACCIDENTALS,  # In units of HOUR^-1
+    timespan: float = 1,  # In units of HOUR
     theta: float = 0,
-    distance: float = 0,
+    distance: float = 10,
 ):
     """
-    Returns the expected count rate for an exponent {n}, maximal {intensity} and {accidental} rate over a given {timespan}, when measuring over {theta} with {distance} between planes.
+    Returns the expected count rate for an exponent {n}, maximal {intensity} of only muons and {accidental} rate over a given {timespan} in HOURS, when measuring over {theta} with {distance} between planes.
     """
     return timespan * (intensity * area_integral(n, theta, distance) + accidentals)
 
@@ -93,11 +101,16 @@ def count_rate(
 # %%
 def read_one(filename: str):
     """
-    TODO once I have a sample file.
     Reads a single filename. Obtains angle theta and count.
     """
-    data = pd.read_csv(filename, delimiter=' ', header=6, index_col=0)
-    print(data)
+    data = pd.read_csv(
+        filename,
+        delimiter=" ",
+        header=5,
+        index_col=0,
+        names=["time", "adc", "sipm", "deadtime", "temp"],
+    )  # Time in ms
+    return data
 
 
 def read_all(folder: str):
@@ -105,8 +118,17 @@ def read_all(folder: str):
     TODO
     Reads all files. Obtains distance, etc.
     """
-# %%
-read_one("data/examples/Run2_M.TXT")
+
 
 # %%
+sample = read_one("data/examples/Run2_S.TXT")
+counts = len(sample.index)
+# print(counts / sample.time.iloc[-1], accidental_rate(0.05))
+SINGLES_RATE = scipy.optimize.least_squares(
+    lambda x: accidental_rate(x) - counts / sample.time.iloc[-1], 0.05
+).x
+ACCIDENTALS = accidental_rate(SINGLES_RATE) * 1000 * 3600
+print(ACCIDENTALS)
 
+
+# %%
