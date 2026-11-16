@@ -96,7 +96,8 @@ def read_one(filename: str):
     TODO once I have a sample file.
     Reads a single filename. Obtains angle theta and count.
     """
-    data = pd.read_csv(filename)
+    data = pd.read_csv(filename, delimiter=' ', header=6, index_col=0)
+    print(data)
 
 
 def read_all(folder: str):
@@ -104,3 +105,8 @@ def read_all(folder: str):
     TODO
     Reads all files. Obtains distance, etc.
     """
+# %%
+read_one("data/examples/Run2_M.TXT")
+
+# %%
+
