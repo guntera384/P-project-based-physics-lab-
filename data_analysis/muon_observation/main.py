@@ -132,3 +132,4 @@ print(ACCIDENTALS)
 
 
 # %%
+RUN_ANGLES_DEG = [0, 0, 0, 0, 0]
