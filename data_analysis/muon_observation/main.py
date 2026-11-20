@@ -101,7 +101,7 @@ def count_rate(
 # %%
 def read_one(filename: str):
     """
-    Reads a single filename. Obtains angle theta and count.
+    Reads a single filename.
     """
     data = pd.read_csv(
         filename,
@@ -132,4 +132,13 @@ print(ACCIDENTALS)
 
 
 # %%
-RUN_ANGLES_DEG = [0, 0, 0, 0, 0]
+RUN_ANGLES_DEG = [0, 90, 15, 60, 30, 7.5, 45, 75, 45, 45, 45]
+
+for i, theta in enumerate(RUN_ANGLES_DEG):
+    if i == 6:
+        continue
+    data = read_one(f"data/runs/Run{i + 1}_S.TXT")
+    counts = len(data.index)
+    duration = read_one(f"data/runs/Run{i + 1}_M.TXT")["time"].iloc[-1]
+    print(counts / duration)
+# %%
