@@ -22,8 +22,9 @@ pip install pyserial
 ### Scale
 
 Check these two settings if the scale doesn't answer, or if someone else may have changed them. Use the buttons on the scale:
+These instructions are likely for the wrong model. 
 
-1. In weighing mode, **hold PRINT** until the unit (e.g. `g`) appears.
+1. In weighing mode, **hold PRINT** until the unit (e.g. `g`) appears. (never appeared in our setup)
 2. Press **MODE** repeatedly until **`Pr`** appears, then press **SET**.
 3. Press **MODE** until **`rE Cr`** appears, then press **SET**. The scale returns to weighing mode.
 4. Hold **PRINT** again, press **MODE** until **`bAUd`** appears, then press **SET**.
