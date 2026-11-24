@@ -18,7 +18,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import scienceplots
 import scipy
+from scipy.special import xlogy
 
 # %%
 """
@@ -47,19 +49,17 @@ PLANE_DIST = 10.0  # cm
 WINDOW_MS = 30e-3  # ms
 
 _x, _w = np.polynomial.legendre.leggauss(40)
-_nodes = np.concatenate(
-    [SIDE_LENGTH * (_x - 1) / 2, SIDE_LENGTH * (_x + 1) / 2]
-)  # split at 0 (|dx| kink)
-_wts = np.concatenate([_w, _w]) * SIDE_LENGTH / 2
-DX, DY = np.meshgrid(_nodes, _nodes, indexing="ij")
-W = np.outer(_wts, _wts)
+_u = np.concatenate([(_x - 1) / 2, (_x + 1) / 2])  # [-1, 1], split at 0
+UX, UY = np.meshgrid(_u, _u, indexing="ij")
+UW = np.outer(*(2 * [np.concatenate([_w, _w]) / 2]))
 
 
 def area_integral(n, theta, d=PLANE_DIST, a=SIDE_LENGTH):
-    """Acceptance-folded geometry factor [cm^2 sr]. theta in RADIANS."""
+    """Acceptance-folded geometry factor [cm^2 sr]. theta [rad], d and a [cm]."""
+    DX, DY = a * UX, a * UY
     R = np.sqrt(DX**2 + DY**2 + d**2)
     cos_zen = np.abs(np.cos(theta) * d / R + np.sin(theta) * DX / R)
-    return np.sum(W * (a - abs(DX)) * (a - abs(DY)) * d**2 / R**4 * cos_zen**n)
+    return a**2 * np.sum(UW * (a - abs(DX)) * (a - abs(DY)) * d**2 / R**4 * cos_zen**n)
 
 
 # %%
@@ -87,11 +87,12 @@ def count_rate(
     timespans: float = 1,  # In units of HOUR
     thetas: float = 0,
     distance: float = PLANE_DIST,
+    side_length: float = SIDE_LENGTH,
 ):
     """
     Returns the expected count rate for an exponent {n}, maximal {intensity} of only muons and {accidental} rate over a given {timespan} in HOURS, when measuring over {theta} with {distance} between planes.
     """
-    ints = np.array([area_integral(n, th, d=distance) for th in thetas])
+    ints = np.array([area_integral(n, th, d=distance, a=side_length) for th in thetas])
     return timespans * (intensity * ints + accidentals)
 
 
@@ -110,13 +111,6 @@ def read_one(filename: str):
     return data
 
 
-def read_all(folder: str):
-    """
-    TODO
-    Reads all files. Obtains distance, etc.
-    """
-
-
 # %%
 
 
@@ -127,7 +121,7 @@ COUNTS = []
 DURATIONS = []
 SINGLES = []
 MAX_RUN_CONSIDERED = 12
-THETA_LIMIT = 60
+THETA_LIMIT = 90
 
 for i, theta in enumerate(RUN_ANGLES_DEG[:MAX_RUN_CONSIDERED]):
     if (
@@ -150,6 +144,7 @@ for i, theta in enumerate(RUN_ANGLES_DEG[:MAX_RUN_CONSIDERED]):
     RUN_ANGLES_MOD.append(np.radians(theta))
 
 SINGLES = np.array(SINGLES)
+print(SINGLES)
 print(SINGLES.mean(), SINGLES.std())
 ACCIDENTALS = accidental_rate(SINGLES.mean()) * 3600_000
 print(ACCIDENTALS)
@@ -160,7 +155,9 @@ plt.savefig("rates_vs_angles.svg")
 
 
 # %%
-def neg_log_likelihood(args, counts, durations: np.ndarray, thetas):
+def neg_log_likelihood(
+    args, counts, durations: np.ndarray, thetas, dist=PLANE_DIST, side=SIDE_LENGTH
+):
     n, inten, acc = args
     expected = count_rate(
         n,
@@ -168,8 +165,10 @@ def neg_log_likelihood(args, counts, durations: np.ndarray, thetas):
         timespans=durations / 3600_000,
         thetas=thetas,
         accidentals=acc,
+        distance=dist,
+        side_length=side,
     )
-    return np.sum(-np.asarray(counts) * np.log(expected) + expected)
+    return np.sum(expected - counts + xlogy(counts, counts / expected))
 
 
 # %%
@@ -183,7 +182,7 @@ print(
         neg_log_likelihood,
         x0=[2, INTENSITY / area_integral(2, 0), ACCIDENTALS],
         args=tuple(map(np.asarray, (COUNTS, DURATIONS, RUN_ANGLES_MOD))),
-        bounds=[(0.1, 10), (1e-3, 1000), (ACCIDENTALS * 0.99, ACCIDENTALS * 1.01)],
+        bounds=[(0.1, 10), (1e-3, 1000), (0, 100)],
     )
 )
 # %%
@@ -195,8 +194,18 @@ plt.scatter(
     )
     / DURATIONS,
     marker="x",
+    label=f"Predictions with exponent {n:.2f} and intensity {inten:.1f}",
 )
-plt.scatter(np.degrees(RUN_ANGLES_MOD), np.array(COUNTS) / DURATIONS, marker="x")
+plt.scatter(
+    np.degrees(RUN_ANGLES_MOD),
+    np.array(COUNTS) / DURATIONS,
+    marker="x",
+    label="Measured rates",
+)
+plt.xlabel("Angle (degrees)")
+plt.ylabel("Rate (counts per millisecond)")
+plt.title("Comparison of prediction and measurement for varying angles")
+plt.legend()
 plt.savefig("prediction.svg")
 
 # %%
@@ -209,4 +218,141 @@ print(
     f"Note that our accidental rate from the master measurements is {ACCIDENTALS}. We thus should measure the accdental rate again, with the devices next to one another."
 )
 
+# %%
+FF = [0, 270, 90, 180]
+FFRATES = []
+for i, theta in enumerate(RUN_ANGLES_DEG[:MAX_RUN_CONSIDERED]):
+    if theta != 45:
+        continue
+    data = read_one(f"data/runs/Run{i + 1}_S.TXT")
+    counts = len(data.index)
+    master = read_one(f"data/runs/Run{i + 1}_M.TXT")
+    duration = master["time"].iloc[-1]
+    FFRATES.append(counts / duration)
+
+
+plt.scatter(FF, FFRATES, marker="x")
+plt.xlabel("Angle (degrees)")
+plt.ylabel("Rate (counts per millisecond)")
+plt.title("Comparison of azimuthal angles")
+plt.savefig("azimuth.svg")
+# %%
+# Error propagation. The following cell was generated by Claude.
+
+BOUNDS = [(0.1, 10), (1e-3, 1000), (0.01, 100)]
+
+
+def fit(counts, durations, thetas, d=PLANE_DIST, a=SIDE_LENGTH, x0=None):
+    """durations in ms, thetas in rad."""
+    return scipy.optimize.minimize(
+        neg_log_likelihood,
+        x0,
+        args=(counts, durations, thetas, d, a),
+        bounds=BOUNDS,
+        options={"ftol": 1e-12},
+    ).x
+
+
+def stat_cov(p, counts, durations, thetas, d=PLANE_DIST, a=SIDE_LENGTH):
+    """Inverse of the numerical Hessian of -ln L at the minimum."""
+    f = lambda q: neg_log_likelihood(q, counts, durations, thetas, d, a)
+    h = 1e-3 * np.maximum(np.abs(p), 1e-2)
+    k = len(p)
+    H = np.empty((k, k))
+    for i in range(k):
+        for j in range(k):
+            ei, ej = np.eye(k)[i] * h[i], np.eye(k)[j] * h[j]
+            H[i, j] = (
+                f(p + ei + ej) - f(p + ei - ej) - f(p - ei + ej) + f(p - ei - ej)
+            ) / (4 * h[i] * h[j])
+    return np.linalg.inv(H)
+
+
+def syst_cov(
+    p,
+    counts,
+    durations,
+    thetas,
+    sig_d,
+    sig_a,
+    sig_th,
+    sig_T,
+    d=PLANE_DIST,
+    a=SIDE_LENGTH,
+):
+    """Refit with each input shifted by ±1σ; sig_th in rad, sig_T in ms (scalars or per-run arrays)."""
+    m = len(thetas)
+    x0 = np.concatenate([[d, a], thetas, durations])
+    sx = np.concatenate(
+        [[sig_d, sig_a], np.broadcast_to(sig_th, m), np.broadcast_to(sig_T, m)]
+    )
+    refit = lambda x: fit(counts, x[2 + m :], x[2 : 2 + m], x[0], x[1], x0=p)
+    J = np.zeros((len(p), len(x0)))
+    for k in np.nonzero(sx)[0]:
+        xp, xm = x0.copy(), x0.copy()
+        xp[k] += sx[k]
+        xm[k] -= sx[k]
+        J[:, k] = (refit(xp) - refit(xm)) / (2 * sx[k])
+    return J @ np.diag(sx**2) @ J.T
+
+
+args = tuple(map(np.asarray, (COUNTS, DURATIONS, RUN_ANGLES_MOD)))
+p = fit(*args, x0=[2, INTENSITY / area_integral(2, 0), ACCIDENTALS])
+C_stat = stat_cov(p, *args)
+C_syst = syst_cov(
+    p, *args, sig_d=0.2, sig_a=0.05, sig_th=np.radians(1), sig_T=0.01 * args[1]
+)
+for name, v, s1, s2 in zip(
+    ["n", "I0", "B"], p, np.sqrt(np.diag(C_stat)), np.sqrt(np.diag(C_syst))
+):
+    print(f"{name} = {v:.3f} ± {s1:.3f} (stat) ± {s2:.3f} (syst)")
+
+# %%
+"""
+The following code block was generated by Claude.
+"""
+plt.style.use("science")
+n, inten, acc = p
+C = C_stat + C_syst  # parameter covariance from before
+T_h = DURATIONS / 3.6e6  # ms -> h
+rates = np.asarray(COUNTS) / T_h  # per hour
+rate_err = np.sqrt(COUNTS) / T_h  # Poisson
+SIG_THETA_DEG = 1.0  # your angle uncertainty
+
+# best-fit curve and 1σ band: sample parameters from their covariance
+grid = np.radians(np.linspace(0, 90, 91))
+best = count_rate(n, inten, acc, timespans=1, thetas=grid)
+samples = np.random.default_rng(0).multivariate_normal(p, C, size=200)
+samples[:, 2] = np.clip(samples[:, 2], 0, None)  # background can't be negative
+curves = np.array([count_rate(*s, timespans=1, thetas=grid) for s in samples])
+lo, hi = np.percentile(curves, [16, 84], axis=0)
+
+# pulls: (data - model) / error
+model_at_data = count_rate(n, inten, acc, timespans=1, thetas=RUN_ANGLES_MOD)
+pulls = (rates - model_at_data) / rate_err
+
+fig, (ax, axr) = plt.subplots(2, 1, sharex=True, figsize=(7, 6), height_ratios=[3, 1])
+deg = np.degrees(grid)
+ax.fill_between(deg, lo, hi, alpha=0.3, label=r"$1\sigma$ band")
+ax.plot(deg, best, label=rf"fit: $n = {n:.2f} \pm {np.sqrt(C[0, 0]):.2f}$")
+ax.errorbar(
+    np.degrees(RUN_ANGLES_MOD),
+    rates,
+    yerr=rate_err,
+    xerr=SIG_THETA_DEG,
+    fmt="o",
+    ms=4,
+    capsize=3,
+    label="measured",
+)
+ax.set_yscale("log")
+ax.set_ylabel("Coincidence rate [1/h]")
+ax.legend()
+
+axr.axhline(0, color="k", lw=0.8)
+axr.errorbar(np.degrees(RUN_ANGLES_MOD), pulls, yerr=1, fmt="o", ms=4, capsize=3)
+axr.set_xlabel("Zenith angle [°]")
+axr.set_ylabel("Pull [$\sigma$]")
+fig.tight_layout()
+fig.savefig("fit_with_band.svg")
 # %%
