@@ -30,7 +30,7 @@ import serial.tools.list_ports
 # ---------------------------------------------------------------------------
 # Settings - adjust these as needed
 # ---------------------------------------------------------------------------
-PORT = "COM6"            # Serial port of the scale (Linux e.g. "/dev/ttyUSB0")
+PORT = "COM3"            # Serial port of the scale (Linux e.g. "/dev/ttyUSB0")
 BAUDRATE = 9600          # Must match the baud rate set on the scale
 INTERVAL_S = 0.100       # Time between readings in seconds (0.100 = 100 ms)
 COMMAND = b"w"           # Older PCB (mode "rE Cr"): b"w" = current weight, b"s" = stable only
